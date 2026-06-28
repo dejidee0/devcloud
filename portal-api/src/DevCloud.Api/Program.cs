@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using System.Text.Json.Serialization;
 using DevCloud.Api.Endpoints;
 using DevCloud.Api.Hubs;
@@ -13,11 +13,29 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
-var jwt = builder.Configuration.GetSection("Jwt").Get<JwtOptions>() ?? new JwtOptions();
+var jwtSection = builder.Configuration.GetSection("Jwt");
+var jwt = jwtSection.Get<JwtOptions>() ?? new JwtOptions();
+var envJwtKey = Environment.GetEnvironmentVariable("DEVCLOUD_JWT_KEY");
+if (!string.IsNullOrWhiteSpace(envJwtKey))
+{
+    jwt.SigningKey = envJwtKey;
+}
+
+builder.Services.Configure<JwtOptions>(options =>
+{
+    jwtSection.Bind(options);
+    if (!string.IsNullOrWhiteSpace(envJwtKey))
+    {
+        options.SigningKey = envJwtKey;
+    }
+});
+
+var connectionString = Environment.GetEnvironmentVariable("DEVCLOUD_CONNECTION_STRING")
+    ?? builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Database connection string is not configured.");
 
 builder.Services.AddDbContext<DevCloudDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(connectionString));
 builder.Services.AddScoped<JwtTokenService>();
 builder.Services.AddScoped<DockerEnvironmentService>();
 builder.Services.AddScoped<InfrastructureStatusService>();
@@ -28,10 +46,15 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+var envCorsOrigins = Environment.GetEnvironmentVariable("DEVCLOUD_CORS_ORIGINS");
+var corsOrigins = string.IsNullOrWhiteSpace(envCorsOrigins)
+    ? builder.Configuration.GetSection("Cors:Origins").Get<string[]>() ?? ["http://localhost:3000"]
+    : envCorsOrigins.Split([',', ';', ' '], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("Portal", policy => policy
-        .WithOrigins(builder.Configuration.GetSection("Cors:Origins").Get<string[]>() ?? ["http://localhost:3000"])
+        .WithOrigins(corsOrigins)
         .AllowCredentials()
         .AllowAnyHeader()
         .AllowAnyMethod());

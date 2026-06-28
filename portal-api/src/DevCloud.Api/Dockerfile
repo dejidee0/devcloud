@@ -1,12 +1,12 @@
-﻿FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 COPY portal-api/ ./
 RUN dotnet restore DevCloud.slnx
-RUN dotnet publish src/DevCloud.Api/DevCloud.Api.csproj -c Release -o /app/publish
+RUN dotnet publish src/DevCloud.Api/DevCloud.Api.csproj -c Release -o /app/publish /p:UseAppHost=false
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY --from=build /app/publish .
-ENV ASPNETCORE_URLS=http://+:5000
-EXPOSE 5000
+ENV ASPNETCORE_URLS=http://+:8080
+EXPOSE 8080
 ENTRYPOINT ["dotnet", "DevCloud.Api.dll"]
