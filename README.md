@@ -1,27 +1,22 @@
-﻿# Codemonk DevCloud
+﻿# DevCloud
+
+Cloud development environment built for developers and enterprise teams.
 
 ## Project
 Codemonk DevCloud
 
 ## Purpose
-Secure remote development infrastructure.
+Secure remote development infrastructure and portal for Codewithmonk Technology.
 
 ## Stack
-- Tailscale mesh network
-- Docker
-- .NET 8
-- Node.js 20
+- ASP.NET Core 8 API
+- Next.js 14 frontend
 - SQL Server 2022
+- Docker
+- Tailscale mesh network
 
-## Server
-- IP: 167.233.97.163
-- Provider: Hetzner
-- Plan: CCX13
-- OS: Ubuntu 22.04
-- Location: Falkenstein
-
-## Owner
-Codemonk / Codewithmonk Technology
-
-## Phase 1 Scope
-Phase 1 establishes secure server access, bootstraps the runtime stack, enables Tailscale SSH, runs SQL Server 2022 in Docker, configures the firewall, and creates the initial development workspace at `/home/devcloud/projects`.
+## Repository Layout
+- `portal-api/` - ASP.NET Core API
+- `portal-web/` - Next.js frontend
+- `docker/` - portal Docker Compose configuration
+- `environments/` - developer environment Docker templates

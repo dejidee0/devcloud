@@ -5,6 +5,27 @@ node_modules/
 # Build outputs
 portal-api/src/**/bin/
 portal-api/src/**/obj/
+**/[Bb]in/
+**/[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+artifacts/
+
+# Visual Studio / .NET user files
+.vs/
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.pdb
+*.cache
+*.nupkg
+*.snupkg
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
 
 # Environment files
 .env
@@ -17,8 +38,8 @@ portal-web/.env.production
 portal-api/src/DevCloud.Api/appsettings.json
 portal-api/src/DevCloud.Api/appsettings.Development.json
 configs/ssh-config.txt
-docs/PRIVATE-*.md
-docs/PRIVATE/
+docs/
+scripts/bootstrap.sh
 
 # Logs and temporary runtime files
 logs/
@@ -29,6 +50,11 @@ logs/
 configs/dev-*
 configs/codemonk*
 
-docs/
-scripts/bootstrap.sh
-
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
