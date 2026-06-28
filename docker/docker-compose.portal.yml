@@ -1,0 +1,39 @@
+﻿services:
+  portal-api:
+    build:
+      context: ..
+      dockerfile: portal-api/src/DevCloud.Api/Dockerfile
+    container_name: portal-api
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:5000
+      ConnectionStrings__DefaultConnection: "Server=host.docker.internal,1433;Database=DevCloudPortal;User Id=sa;Password=${DEVCLOUD_SQL_PASSWORD:?set DEVCLOUD_SQL_PASSWORD};TrustServerCertificate=True"
+      Jwt__SigningKey: "${DEVCLOUD_JWT_SIGNING_KEY:-replace-this-with-a-long-production-secret-at-least-64-bytes}"
+      Cors__Origins__0: "http://100.105.66.71:3000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "5000:5000"
+    networks:
+      - devcloud
+
+  portal-web:
+    build:
+      context: ..
+      dockerfile: portal-web/Dockerfile
+    container_name: portal-web
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: "http://100.105.66.71:5000"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - portal-api
+    networks:
+      - devcloud
+
+networks:
+  devcloud:
+    name: devcloud-portal
+

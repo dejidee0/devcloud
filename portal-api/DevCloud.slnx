@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/DevCloud.Api/DevCloud.Api.csproj" />
+    <Project Path="src/DevCloud.Application/DevCloud.Application.csproj" />
+    <Project Path="src/DevCloud.Domain/DevCloud.Domain.csproj" />
+    <Project Path="src/DevCloud.Infrastructure/DevCloud.Infrastructure.csproj" />
+  </Folder>
+</Solution>
