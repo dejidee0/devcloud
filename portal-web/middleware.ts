@@ -10,19 +10,26 @@ const protectedRoutes = [
   "/audit",
   "/settings",
   "/time-tracking",
-  "/secrets"
+  "/secrets",
+  "/client"
 ];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const isProtectedRoute = protectedRoutes.some((route) => pathname === route || pathname.startsWith(`${route}/`));
+
+  // Public routes never redirect.
+  const isProtectedRoute = protectedRoutes.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`)
+  );
 
   if (!isProtectedRoute) {
     return NextResponse.next();
   }
 
-  const hasPortalSession = request.cookies.get("devcloud_portal_session")?.value === "1";
-  if (!hasPortalSession) {
+  const hasTokenCookie = Boolean(request.cookies.get("devcloud_token")?.value);
+  const hasAuthHeader = request.headers.get("authorization")?.startsWith("Bearer ") ?? false;
+
+  if (!hasTokenCookie && !hasAuthHeader) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     url.searchParams.set("next", pathname);
@@ -43,6 +50,7 @@ export const config = {
     "/audit/:path*",
     "/settings/:path*",
     "/time-tracking/:path*",
-    "/secrets/:path*"
+    "/secrets/:path*",
+    "/client/:path*"
   ]
 };

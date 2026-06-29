@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import type { Route } from "next";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import styles from "./login.module.css";
@@ -35,7 +36,6 @@ export default function LoginPage() {
       const response = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
         mode: "cors",
-        credentials: "include",
         headers: {
           "Content-Type": "application/json"
         },
@@ -47,10 +47,15 @@ export default function LoginPage() {
 
       if (!response.ok) {
         const detail = await response.text();
-        throw new Error(detail || `Login failed with ${response.status}`);
+        throw new Error(
+          response.status === 401
+            ? "Invalid email or password"
+            : detail || `Login failed with ${response.status}`
+        );
       }
 
       const user = (await response.json()) as LoginResponse;
+      window.localStorage.setItem("devcloud_token", user.accessToken);
       window.localStorage.setItem("devcloud_authenticated", "true");
       window.localStorage.setItem("devcloud_user", JSON.stringify({
         userId: user.userId,
@@ -58,11 +63,11 @@ export default function LoginPage() {
         fullName: user.fullName,
         role: user.role
       }));
-      document.cookie = `devcloud_portal_session=1; Path=/; Max-Age=${SESSION_MAX_AGE_SECONDS}; SameSite=Lax; Secure`;
+      document.cookie = `devcloud_token=${user.accessToken}; Path=/; Max-Age=${SESSION_MAX_AGE_SECONDS}; SameSite=Lax; Secure`;
 
       const nextPath = new URLSearchParams(window.location.search).get("next");
       const redirectTo = nextPath?.startsWith("/") ? nextPath : "/dashboard";
-      router.replace(redirectTo as Route);
+      router.push(redirectTo as Route);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
     } finally {
@@ -112,6 +117,10 @@ export default function LoginPage() {
           <button className={styles.submitButton} disabled={loading} type="submit">
             {loading ? "Signing in" : "Sign in"}
           </button>
+
+          <Link className={styles.altLink} href="/signup">
+            Don&apos;t have an account? Sign up &rarr;
+          </Link>
 
           <span className={styles.poweredBy}>Powered by Codewithmonk Technology</span>
         </form>
