@@ -17,7 +17,6 @@ const protectedRoutes = [
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Public routes never redirect.
   const isProtectedRoute = protectedRoutes.some(
     (route) => pathname === route || pathname.startsWith(`${route}/`)
   );
@@ -26,10 +25,11 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const hasTokenCookie = Boolean(request.cookies.get("devcloud_token")?.value);
+  const hasPortalSessionCookie = Boolean(request.cookies.get("devcloud_portal_session")?.value);
+  const hasLegacyTokenCookie = Boolean(request.cookies.get("devcloud_token")?.value);
   const hasAuthHeader = request.headers.get("authorization")?.startsWith("Bearer ") ?? false;
 
-  if (!hasTokenCookie && !hasAuthHeader) {
+  if (!hasPortalSessionCookie && !hasLegacyTokenCookie && !hasAuthHeader) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     url.searchParams.set("next", pathname);

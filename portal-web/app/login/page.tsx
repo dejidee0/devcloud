@@ -10,6 +10,10 @@ import styles from "./login.module.css";
 const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000").replace(/\/$/, "");
 const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 14;
 
+function cookieSecureSuffix() {
+  return typeof window !== "undefined" && window.location.protocol === "https:" ? "; Secure" : "";
+}
+
 type LoginResponse = {
   userId: string;
   email: string;
@@ -18,6 +22,16 @@ type LoginResponse = {
   accessToken: string;
   refreshToken: string;
 };
+
+async function readError(response: Response) {
+  const contentType = response.headers.get("content-type") ?? "";
+  if (contentType.includes("application/json")) {
+    const payload = (await response.json().catch(() => null)) as { error?: string; message?: string; title?: string } | null;
+    return payload?.error ?? payload?.message ?? payload?.title ?? "";
+  }
+
+  return response.text();
+}
 
 export default function LoginPage() {
   const router = useRouter();
@@ -36,6 +50,7 @@ export default function LoginPage() {
       const response = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
         mode: "cors",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json"
         },
@@ -46,7 +61,7 @@ export default function LoginPage() {
       });
 
       if (!response.ok) {
-        const detail = await response.text();
+        const detail = await readError(response);
         throw new Error(
           response.status === 401
             ? "Invalid email or password"
@@ -55,6 +70,10 @@ export default function LoginPage() {
       }
 
       const user = (await response.json()) as LoginResponse;
+      if (!user.accessToken) {
+        throw new Error("Login succeeded but no access token was returned.");
+      }
+
       window.localStorage.setItem("devcloud_token", user.accessToken);
       window.localStorage.setItem("devcloud_authenticated", "true");
       window.localStorage.setItem("devcloud_user", JSON.stringify({
@@ -63,11 +82,15 @@ export default function LoginPage() {
         fullName: user.fullName,
         role: user.role
       }));
-      document.cookie = `devcloud_token=${user.accessToken}; Path=/; Max-Age=${SESSION_MAX_AGE_SECONDS}; SameSite=Lax; Secure`;
+
+      const secureSuffix = cookieSecureSuffix();
+      document.cookie = `devcloud_portal_session=1; Path=/; Max-Age=${SESSION_MAX_AGE_SECONDS}; SameSite=Lax${secureSuffix}`;
+      document.cookie = `devcloud_token=; Path=/; Max-Age=0; SameSite=Lax${secureSuffix}`;
 
       const nextPath = new URLSearchParams(window.location.search).get("next");
       const redirectTo = nextPath?.startsWith("/") ? nextPath : "/dashboard";
       router.push(redirectTo as Route);
+      router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
     } finally {

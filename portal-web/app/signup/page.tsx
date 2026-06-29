@@ -10,6 +10,10 @@ import styles from "./signup.module.css";
 const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000").replace(/\/$/, "");
 const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 14;
 
+function cookieSecureSuffix() {
+  return typeof window !== "undefined" && window.location.protocol === "https:" ? "; Secure" : "";
+}
+
 type RegisterResponse = {
   userId: string;
   email: string;
@@ -89,7 +93,7 @@ export default function SignupPage() {
         fullName: user.fullName,
         role: user.role
       }));
-      document.cookie = `devcloud_portal_session=1; Path=/; Max-Age=${SESSION_MAX_AGE_SECONDS}; SameSite=Lax; Secure`;
+      document.cookie = `devcloud_portal_session=1; Path=/; Max-Age=${SESSION_MAX_AGE_SECONDS}; SameSite=Lax${cookieSecureSuffix()}`;
 
       router.push("/dashboard" as Route);
     } catch (err) {
@@ -199,3 +203,4 @@ export default function SignupPage() {
     </main>
   );
 }
+

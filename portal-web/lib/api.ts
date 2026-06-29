@@ -11,6 +11,17 @@ function clearSession() {
   window.localStorage.removeItem("devcloud_authenticated");
   window.localStorage.removeItem("devcloud_user");
   document.cookie = "devcloud_token=; Path=/; Max-Age=0; SameSite=Lax";
+  document.cookie = "devcloud_portal_session=; Path=/; Max-Age=0; SameSite=Lax";
+}
+
+async function readError(res: Response) {
+  const contentType = res.headers.get("content-type") ?? "";
+  if (contentType.includes("application/json")) {
+    const payload = (await res.json().catch(() => null)) as { error?: string; message?: string; title?: string } | null;
+    return payload?.error ?? payload?.message ?? payload?.title ?? "";
+  }
+
+  return res.text();
 }
 
 export async function api<T>(path: string, init?: RequestInit): Promise<T> {
@@ -19,6 +30,7 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${API_URL}${path}`, {
     ...init,
     mode: "cors",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -33,7 +45,7 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
   }
 
   if (!res.ok) {
-    const detail = await res.text();
+    const detail = await readError(res);
     throw new Error(detail || `Request failed with ${res.status}`);
   }
 
