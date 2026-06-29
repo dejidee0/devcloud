@@ -1,21 +1,31 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-const publicRoutes = ["/login"];
+const protectedRoutes = [
+  "/dashboard",
+  "/projects",
+  "/team",
+  "/environments",
+  "/terminal",
+  "/deployments",
+  "/audit",
+  "/settings",
+  "/time-tracking",
+  "/secrets"
+];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const isPublic = publicRoutes.some((route) => pathname.startsWith(route));
-  const hasSession = request.cookies.has("devcloud_access");
+  const isProtectedRoute = protectedRoutes.some((route) => pathname === route || pathname.startsWith(`${route}/`));
 
-  if (!isPublic && !hasSession && !pathname.startsWith("/_next")) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    return NextResponse.redirect(url);
+  if (!isProtectedRoute) {
+    return NextResponse.next();
   }
 
-  if (pathname === "/login" && hasSession) {
+  const hasPortalSession = request.cookies.get("devcloud_portal_session")?.value === "1";
+  if (!hasPortalSession) {
     const url = request.nextUrl.clone();
-    url.pathname = "/dashboard";
+    url.pathname = "/login";
+    url.searchParams.set("next", pathname);
     return NextResponse.redirect(url);
   }
 
@@ -23,5 +33,16 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"]
+  matcher: [
+    "/dashboard/:path*",
+    "/projects/:path*",
+    "/team/:path*",
+    "/environments/:path*",
+    "/terminal/:path*",
+    "/deployments/:path*",
+    "/audit/:path*",
+    "/settings/:path*",
+    "/time-tracking/:path*",
+    "/secrets/:path*"
+  ]
 };

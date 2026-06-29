@@ -1,9 +1,13 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { useRouter } from "next/navigation";
+import type { Route } from "next";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
+import styles from "./login.module.css";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000").replace(/\/$/, "");
+const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 14;
 
 type LoginResponse = {
   userId: string;
@@ -16,13 +20,16 @@ type LoginResponse = {
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setLoading(true);
     setError(null);
+
     const form = new FormData(event.currentTarget);
 
     try {
@@ -52,7 +59,11 @@ export default function LoginPage() {
         fullName: user.fullName,
         role: user.role
       }));
-      router.replace("/dashboard");
+      document.cookie = `devcloud_portal_session=1; Path=/; Max-Age=${SESSION_MAX_AGE_SECONDS}; SameSite=Lax; Secure`;
+
+      const nextPath = searchParams.get("next");
+      const redirectTo = nextPath?.startsWith("/") ? nextPath : "/dashboard";
+      router.replace(redirectTo as Route);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
     } finally {
@@ -61,14 +72,80 @@ export default function LoginPage() {
   }
 
   return (
-    <main style={{ minHeight: "100vh", display: "grid", placeItems: "center", padding: 24 }}>
-      <form onSubmit={submit} style={{ width: "min(380px, 100%)", display: "grid", gap: 14 }}>
-        <div style={{ textAlign: "center", color: "var(--brand)", fontWeight: 800, fontSize: 28 }}>DevCloud</div>
-        <input name="email" type="email" placeholder="Email" required />
-        <input name="password" type="password" placeholder="Password" required />
-        {error ? <div className="error-line">{error}</div> : null}
-        <button disabled={loading}>{loading ? "Signing in" : "Sign in"}</button>
-      </form>
+    <main className={styles.loginShell}>
+      <section className={styles.formPanel}>
+        <div className={styles.brand}>DevCloud</div>
+        <div className={styles.formGlow} />
+        <form className={styles.loginCard} onSubmit={submit}>
+          <div className={styles.copyBlock}>
+            <h1>Welcome back</h1>
+            <p>Sign in to your DevCloud workspace</p>
+          </div>
+
+          <label className={styles.field}>
+            <span>Email</span>
+            <input name="email" type="email" autoComplete="email" placeholder="you@company.com" required />
+          </label>
+
+          <label className={styles.field}>
+            <span>Password</span>
+            <div className={styles.passwordWrap}>
+              <input
+                name="password"
+                type={showPassword ? "text" : "password"}
+                autoComplete="current-password"
+                placeholder="Enter your password"
+                required
+              />
+              <button
+                type="button"
+                className={styles.passwordToggle}
+                onClick={() => setShowPassword((value) => !value)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+          </label>
+
+          {error ? <div className={styles.errorLine}>{error}</div> : null}
+
+          <button className={styles.submitButton} disabled={loading} type="submit">
+            {loading ? "Signing in" : "Sign in"}
+          </button>
+
+          <span className={styles.poweredBy}>Powered by Codewithmonk Technology</span>
+        </form>
+      </section>
+
+      <section className={styles.terminalPanel} aria-label="DevCloud terminal preview">
+        <div className={styles.terminalAura} />
+        <div className={styles.terminalWindow}>
+          <div className={styles.terminalHeader}>
+            <div className={styles.terminalDots}>
+              <span />
+              <span />
+              <span />
+            </div>
+            <strong>devcloud - ssh</strong>
+          </div>
+          <div className={styles.terminalBody}>
+            <span className={styles.typeLine}>$ connecting to devcloud mesh...</span>
+            <span className={styles.typeLine}>{"\u2713 Tailscale authenticated"}</span>
+            <span className={styles.typeLine}>$ spinning up .NET environment...</span>
+            <span className={styles.typeLine}>{"\u2713 Environment ready in 4.2s"}</span>
+            <span className={styles.typeLine}>$ git clone client-project</span>
+            <span className={styles.typeLine}>{"\u2713 Repository synced"}</span>
+            <span className={styles.typeLine}>Welcome to DevCloud, Codemonk</span>
+          </div>
+        </div>
+
+        <div className={styles.pills}>
+          <span>{"\uD83D\uDD12 Zero Trust"}</span>
+          <span>{"\u26A1 60s Environments"}</span>
+          <span>{"\uD83D\uDCCA Full Audit Trail"}</span>
+        </div>
+      </section>
     </main>
   );
 }

@@ -1,0 +1,369 @@
+.loginShell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(360px, 2fr);
+  background: #080808;
+  color: #ffffff;
+  overflow: hidden;
+}
+
+.formPanel {
+  position: relative;
+  min-height: 100vh;
+  padding: clamp(22px, 4vw, 54px);
+  display: grid;
+  grid-template-rows: auto 1fr;
+  background: #080808;
+  isolation: isolate;
+}
+
+.brand {
+  position: relative;
+  z-index: 2;
+  color: var(--brand);
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.formGlow {
+  position: absolute;
+  left: 22%;
+  top: 36%;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 217, 126, 0.18), transparent 64%);
+  filter: blur(42px);
+  opacity: 0.55;
+  transform: translate3d(0, 0, 0);
+  animation: orbPulse 7s ease-in-out infinite;
+  z-index: -1;
+}
+
+.loginCard {
+  width: min(430px, 100%);
+  align-self: center;
+  justify-self: center;
+  display: grid;
+  gap: 18px;
+}
+
+.copyBlock {
+  margin-bottom: 10px;
+}
+
+.copyBlock h1 {
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(42px, 5vw, 64px);
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.copyBlock p {
+  margin: 14px 0 0;
+  color: #8d8d8d;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+  color: #bdbdbd;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.field input,
+.passwordWrap input {
+  width: 100%;
+  min-height: 52px;
+  border: 1px solid #2a2a2a;
+  border-radius: 7px;
+  background: #161616;
+  color: #ffffff;
+  padding: 0 14px;
+  outline: none;
+  transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.field input::placeholder,
+.passwordWrap input::placeholder {
+  color: #5d5d5d;
+}
+
+.field input:focus,
+.passwordWrap input:focus {
+  border-color: #00D97E;
+  box-shadow: 0 0 0 3px rgba(0, 217, 126, 0.13), 0 0 26px rgba(0, 217, 126, 0.1);
+  background: #161616;
+}
+
+.passwordWrap {
+  position: relative;
+}
+
+.passwordWrap input {
+  padding-right: 50px;
+}
+
+.passwordToggle {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  width: 36px;
+  height: 36px;
+  min-height: 36px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 6px;
+  color: #8d8d8d;
+  background: transparent;
+}
+
+.passwordToggle:hover {
+  color: #ffffff;
+  background: #202020;
+}
+
+.submitButton {
+  width: 100%;
+  min-height: 52px;
+  border: 0;
+  border-radius: 7px;
+  background: #00D97E;
+  color: #000000;
+  font-weight: 700;
+  transition: filter 160ms ease;
+}
+
+.submitButton:hover {
+  background: #00D97E;
+  filter: brightness(1.1);
+}
+
+.submitButton:disabled {
+  cursor: wait;
+  filter: grayscale(0.25) brightness(0.9);
+}
+
+.errorLine {
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 59, 48, 0.32);
+  border-radius: 7px;
+  color: #ff7b73;
+  background: rgba(255, 59, 48, 0.08);
+  font-size: 13px;
+}
+
+.poweredBy {
+  justify-self: center;
+  color: #5f5f5f;
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+.terminalPanel {
+  position: relative;
+  min-height: 100vh;
+  padding: clamp(28px, 4vw, 58px);
+  display: grid;
+  align-content: center;
+  gap: 26px;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(0, 217, 126, 0.32), transparent 36%),
+    radial-gradient(circle at 72% 18%, rgba(0, 217, 126, 0.12), transparent 30%),
+    #0a0a0a;
+  animation: panelPulse 8s ease-in-out infinite;
+  overflow: hidden;
+  perspective: 1200px;
+}
+
+.terminalAura {
+  position: absolute;
+  inset: 18% 8% auto;
+  height: 420px;
+  background: radial-gradient(circle, rgba(0, 217, 126, 0.24), transparent 62%);
+  filter: blur(50px);
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.terminalWindow {
+  position: relative;
+  z-index: 1;
+  min-height: 380px;
+  border: 1px solid rgba(0, 217, 126, 0.22);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #050807;
+  box-shadow: 0 36px 110px rgba(0, 0, 0, 0.66), 0 0 84px rgba(0, 217, 126, 0.2);
+  transform: rotateX(8deg) rotateY(-10deg) translate3d(0, 0, 0);
+  animation: terminalFloat 6s ease-in-out infinite;
+}
+
+.terminalHeader {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 14px;
+  background: #111111;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.terminalHeader strong {
+  margin-left: auto;
+  color: #9c9c9c;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.terminalDots {
+  display: flex;
+  gap: 7px;
+}
+
+.terminalDots span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ff5f57;
+}
+
+.terminalDots span:nth-child(2) {
+  background: #febc2e;
+}
+
+.terminalDots span:nth-child(3) {
+  background: #00D97E;
+}
+
+.terminalBody {
+  padding: 24px;
+  display: grid;
+  gap: 15px;
+  color: #c8ffe4;
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: clamp(12px, 1.35vw, 14px);
+}
+
+.typeLine {
+  width: 0;
+  max-width: max-content;
+  overflow: hidden;
+  white-space: nowrap;
+  opacity: 0;
+  color: #c8ffe4;
+  animation: typeText 1200ms steps(42, end) forwards;
+}
+
+.typeLine:nth-child(1) { animation-delay: 200ms; }
+.typeLine:nth-child(2) { animation-delay: 1350ms; color: #00D97E; }
+.typeLine:nth-child(3) { animation-delay: 2450ms; }
+.typeLine:nth-child(4) { animation-delay: 3650ms; color: #00D97E; }
+.typeLine:nth-child(5) { animation-delay: 4700ms; }
+.typeLine:nth-child(6) { animation-delay: 5750ms; color: #00D97E; }
+.typeLine:nth-child(7) { animation-delay: 6850ms; color: #ffffff; }
+
+.pills {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.pills span {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  padding: 0 12px;
+  color: #d6d6d6;
+  background: rgba(255, 255, 255, 0.05);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+@keyframes orbPulse {
+  0%, 100% { transform: translate3d(0, 0, 0); opacity: 0.42; }
+  50% { transform: translate3d(18px, -14px, 0); opacity: 0.7; }
+}
+
+@keyframes panelPulse {
+  0%, 100% { filter: saturate(1) brightness(1); }
+  50% { filter: saturate(1.28) brightness(1.08); }
+}
+
+@keyframes terminalFloat {
+  0%, 100% { transform: rotateX(8deg) rotateY(-10deg) translate3d(0, 0, 0); }
+  50% { transform: rotateX(10deg) rotateY(-7deg) translate3d(0, -12px, 0); }
+}
+
+@keyframes typeText {
+  0% { width: 0; opacity: 1; }
+  100% { width: 100%; opacity: 1; }
+}
+
+@media (max-width: 900px) {
+  .loginShell {
+    grid-template-columns: 1fr;
+  }
+
+  .terminalPanel {
+    min-height: 380px;
+    order: -1;
+    padding: 28px 18px;
+  }
+
+  .formPanel {
+    min-height: auto;
+    padding: 28px 18px 42px;
+  }
+
+  .loginCard {
+    padding-top: 64px;
+  }
+
+  .terminalWindow {
+    min-height: 300px;
+    transform: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .copyBlock h1 {
+    font-size: 40px;
+  }
+
+  .terminalBody {
+    padding: 18px;
+    font-size: 11px;
+  }
+
+  .pills {
+    justify-content: flex-start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .formGlow,
+  .terminalPanel,
+  .terminalWindow,
+  .typeLine {
+    animation: none;
+  }
+
+  .typeLine {
+    width: 100%;
+    opacity: 1;
+  }
+}
