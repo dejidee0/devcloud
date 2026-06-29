@@ -103,18 +103,20 @@ public static class AuthEndpoints
     private static void WriteAuthCookies(HttpContext http, string accessToken, string refreshToken)
     {
         var secure = http.Request.IsHttps;
+        var hasCrossSiteOrigin = !string.IsNullOrWhiteSpace(http.Request.Headers.Origin.ToString());
+        var sameSite = secure && hasCrossSiteOrigin ? SameSiteMode.None : SameSiteMode.Lax;
         http.Response.Cookies.Append("devcloud_access", accessToken, new CookieOptions
         {
             HttpOnly = true,
             Secure = secure,
-            SameSite = SameSiteMode.Lax,
+            SameSite = sameSite,
             Expires = DateTimeOffset.UtcNow.AddMinutes(30)
         });
         http.Response.Cookies.Append("devcloud_refresh", refreshToken, new CookieOptions
         {
             HttpOnly = true,
             Secure = secure,
-            SameSite = SameSiteMode.Lax,
+            SameSite = sameSite,
             Expires = DateTimeOffset.UtcNow.AddDays(14)
         });
     }

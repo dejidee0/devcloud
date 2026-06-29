@@ -1,8 +1,9 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000";
+const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000").replace(/\/$/, "");
 
 export async function api<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${API_URL}${path}`, {
     ...init,
+    mode: "cors",
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
@@ -10,6 +11,11 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
     },
     cache: "no-store"
   });
+
+  if (res.status === 401 && typeof window !== "undefined") {
+    window.localStorage.removeItem("devcloud_authenticated");
+    window.location.assign("/login");
+  }
 
   if (!res.ok) {
     const detail = await res.text();

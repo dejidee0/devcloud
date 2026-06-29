@@ -46,15 +46,39 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-var envCorsOrigins = Environment.GetEnvironmentVariable("DEVCLOUD_CORS_ORIGINS");
-var corsOrigins = string.IsNullOrWhiteSpace(envCorsOrigins)
-    ? builder.Configuration.GetSection("Cors:Origins").Get<string[]>() ?? ["http://localhost:3000"]
-    : envCorsOrigins.Split([',', ';', ' '], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+var configuredCorsOrigins = builder.Configuration.GetSection("Cors:Origins").Get<string[]>() ?? Array.Empty<string>();
+var envCorsOrigins = Environment.GetEnvironmentVariable("DEVCLOUD_CORS_ORIGINS")
+    ?.Split(new[] { ',', ';', ' ' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+    ?? Array.Empty<string>();
+var corsOrigins = configuredCorsOrigins
+    .Concat(envCorsOrigins)
+    .Concat(new[]
+    {
+        "http://localhost:3000",
+        "https://devcloud-three.vercel.app"
+    })
+    .Select(origin => origin.Trim().TrimEnd('/'))
+    .Where(origin => !string.IsNullOrWhiteSpace(origin))
+    .Distinct(StringComparer.OrdinalIgnoreCase)
+    .ToArray();
+
+static bool IsAllowedCorsOrigin(string origin, string[] allowedOrigins)
+{
+    var normalizedOrigin = origin.TrimEnd('/');
+    if (allowedOrigins.Contains(normalizedOrigin, StringComparer.OrdinalIgnoreCase))
+    {
+        return true;
+    }
+
+    return Uri.TryCreate(normalizedOrigin, UriKind.Absolute, out var uri)
+        && uri.Scheme == Uri.UriSchemeHttps
+        && uri.Host.EndsWith(".vercel.app", StringComparison.OrdinalIgnoreCase);
+}
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("Portal", policy => policy
-        .WithOrigins(corsOrigins)
+        .SetIsOriginAllowed(origin => IsAllowedCorsOrigin(origin, corsOrigins))
         .AllowCredentials()
         .AllowAnyHeader()
         .AllowAnyMethod());

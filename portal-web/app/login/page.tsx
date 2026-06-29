@@ -2,7 +2,17 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { api } from "@/lib/api";
+
+const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000").replace(/\/$/, "");
+
+type LoginResponse = {
+  userId: string;
+  email: string;
+  fullName: string;
+  role: string;
+  accessToken: string;
+  refreshToken: string;
+};
 
 export default function LoginPage() {
   const router = useRouter();
@@ -14,12 +24,35 @@ export default function LoginPage() {
     setLoading(true);
     setError(null);
     const form = new FormData(event.currentTarget);
+
     try {
-      await api("/api/auth/login", {
+      const response = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
-        body: JSON.stringify({ email: form.get("email"), password: form.get("password") })
+        mode: "cors",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          email: form.get("email"),
+          password: form.get("password")
+        })
       });
-      router.push("/dashboard");
+
+      if (!response.ok) {
+        const detail = await response.text();
+        throw new Error(detail || `Login failed with ${response.status}`);
+      }
+
+      const user = (await response.json()) as LoginResponse;
+      window.localStorage.setItem("devcloud_authenticated", "true");
+      window.localStorage.setItem("devcloud_user", JSON.stringify({
+        userId: user.userId,
+        email: user.email,
+        fullName: user.fullName,
+        role: user.role
+      }));
+      router.replace("/dashboard");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
     } finally {
