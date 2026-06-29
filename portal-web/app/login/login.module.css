@@ -102,6 +102,19 @@
   background: #161616;
 }
 
+
+.field input:-webkit-autofill,
+.field input:-webkit-autofill:hover,
+.field input:-webkit-autofill:focus,
+.passwordWrap input:-webkit-autofill,
+.passwordWrap input:-webkit-autofill:hover,
+.passwordWrap input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #ffffff;
+  caret-color: #ffffff;
+  box-shadow: 0 0 0 1000px #161616 inset, 0 0 0 3px rgba(0, 217, 126, 0.13);
+  border-color: #00D97E;
+  transition: background-color 9999s ease-out 0s;
+}
 .passwordWrap {
   position: relative;
 }
@@ -163,7 +176,7 @@
 
 .altLink {
   justify-self: center;
-  color: #F5A623;
+  color: #00D97E;
   font-size: 14px;
   font-weight: 600;
   transition: filter 200ms cubic-bezier(0.16, 1, 0.3, 1);

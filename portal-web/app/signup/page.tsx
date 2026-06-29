@@ -57,6 +57,7 @@ export default function SignupPage() {
       const response = await fetch(`${API_URL}/api/auth/register`, {
         method: "POST",
         mode: "cors",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json"
         },
@@ -88,7 +89,7 @@ export default function SignupPage() {
         fullName: user.fullName,
         role: user.role
       }));
-      document.cookie = `devcloud_token=${user.accessToken}; Path=/; Max-Age=${SESSION_MAX_AGE_SECONDS}; SameSite=Lax; Secure`;
+      document.cookie = `devcloud_portal_session=1; Path=/; Max-Age=${SESSION_MAX_AGE_SECONDS}; SameSite=Lax; Secure`;
 
       router.push("/dashboard" as Route);
     } catch (err) {
@@ -180,19 +181,19 @@ export default function SignupPage() {
           </div>
           <div className={styles.terminalBody}>
             <span className={styles.typeLine}>$ creating workspace for you...</span>
-            <span className={styles.typeLine}>{"✓ Tailscale mesh configured"}</span>
+            <span className={styles.typeLine}>{"\u2713 Tailscale mesh configured"}</span>
             <span className={styles.typeLine}>$ setting up your first environment...</span>
-            <span className={styles.typeLine}>{"✓ .NET 8 environment ready"}</span>
+            <span className={styles.typeLine}>{"\u2713 .NET 8 environment ready"}</span>
             <span className={styles.typeLine}>$ importing your GitHub repos...</span>
-            <span className={styles.typeLine}>{"✓ 3 repositories synced"}</span>
-            <span className={styles.typeLine}>{"Welcome to DevCloud! 🚀"}</span>
+            <span className={styles.typeLine}>{"\u2713 3 repositories synced"}</span>
+            <span className={styles.typeLine}>{"Welcome to DevCloud! \uD83D\uDE80"}</span>
           </div>
         </div>
 
         <div className={styles.pills}>
-          <span>{"🔒 Zero Trust"}</span>
-          <span>{"⚡ 60s Environments"}</span>
-          <span>{"📊 Full Audit Trail"}</span>
+          <span>{"\uD83D\uDD12 Zero Trust"}</span>
+          <span>{"\u26A1 60s Environments"}</span>
+          <span>{"\uD83D\uDCCA Full Audit Trail"}</span>
         </div>
       </section>
     </main>

@@ -2,8 +2,8 @@
   --bg-base: #080808;
   --bg-surface: #0f0f0f;
   --bg-elevated: #161616;
-  --gold: #F5A623;
-  --gold-dim: rgba(245, 166, 35, 0.08);
+  --gold: #00D97E;
+  --gold-dim: rgba(0, 217, 126, 0.1);
   --green: #00D97E;
   --purple: #7C3AED;
   --blue: #0EA5E9;
@@ -17,8 +17,8 @@
 }
 
 .page [data-reveal] {
-  opacity: 0;
-  transform: translateY(20px);
+  opacity: 1;
+  transform: none;
 }
 
 .revealed {
@@ -190,7 +190,7 @@
 
 .badge {
   display: inline-block;
-  border: 1px solid rgba(245, 166, 35, 0.4);
+  border: 1px solid rgba(0, 217, 126, 0.4);
   color: var(--gold);
   font-size: 12px;
   font-weight: 600;
@@ -279,7 +279,7 @@
   overflow: hidden;
   background: #111;
   transform: rotateX(6deg) rotateY(-14deg);
-  box-shadow: 0 60px 120px rgba(0, 0, 0, 0.7), 0 0 60px rgba(245, 166, 35, 0.12);
+  box-shadow: 0 60px 120px rgba(0, 0, 0, 0.7), 0 0 60px rgba(0, 217, 126, 0.12);
   animation: floatY 4s ease-in-out infinite alternate;
 }
 
@@ -342,7 +342,7 @@
 
 .mockSidebar span:first-child {
   background: var(--gold-dim);
-  border: 1px solid rgba(245, 166, 35, 0.4);
+  border: 1px solid rgba(0, 217, 126, 0.4);
 }
 
 .mockMain {
@@ -475,8 +475,8 @@
 }
 
 .colGold {
-  border-color: rgba(245, 166, 35, 0.28);
-  background: linear-gradient(180deg, rgba(245, 166, 35, 0.05), transparent);
+  border-color: rgba(0, 217, 126, 0.28);
+  background: linear-gradient(180deg, rgba(0, 217, 126, 0.05), transparent);
 }
 
 .colTitleRed,
@@ -562,8 +562,8 @@
 }
 
 .flowGlow {
-  border-color: rgba(245, 166, 35, 0.35);
-  box-shadow: 0 0 50px rgba(245, 166, 35, 0.12);
+  border-color: rgba(0, 217, 126, 0.35);
+  box-shadow: 0 0 50px rgba(0, 217, 126, 0.12);
 }
 
 .flowIcon {
@@ -605,7 +605,7 @@
 }
 
 .flowArrow::after {
-  content: "›";
+  content: ">";
   position: absolute;
   right: -6px;
   top: 50%;
@@ -626,7 +626,7 @@
 .howQuote {
   width: min(820px, 100%);
   margin: 48px auto 0;
-  border: 1px solid rgba(245, 166, 35, 0.4);
+  border: 1px solid rgba(0, 217, 126, 0.4);
   border-radius: 12px;
   background: var(--gold-dim);
   padding: 28px 32px;
@@ -668,7 +668,7 @@
   stroke-width: 2.5;
   stroke-dasharray: 9 7;
   stroke-linecap: round;
-  filter: drop-shadow(0 0 6px rgba(245, 166, 35, 0.6));
+  filter: drop-shadow(0 0 6px rgba(0, 217, 126, 0.6));
   animation: routeDash 1s linear infinite;
 }
 
@@ -694,7 +694,7 @@
 .nodeDot { fill: #555; transition: all 200ms ease; }
 .nodeActive {
   fill: var(--gold);
-  filter: drop-shadow(0 0 8px rgba(245, 166, 35, 0.8));
+  filter: drop-shadow(0 0 8px rgba(0, 217, 126, 0.8));
 }
 
 .switcherControls {
@@ -756,7 +756,7 @@
 }
 
 .nodeOption:hover {
-  border-color: rgba(245, 166, 35, 0.5);
+  border-color: rgba(0, 217, 126, 0.5);
   color: var(--text-primary);
 }
 
@@ -824,7 +824,7 @@
     box-shadow 200ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.accent_gold { --accent: #F5A623; --accent-dim: rgba(245, 166, 35, 0.1); }
+.accent_gold { --accent: #00D97E; --accent-dim: rgba(0, 217, 126, 0.1); }
 .accent_green { --accent: #00D97E; --accent-dim: rgba(0, 217, 126, 0.1); }
 .accent_blue { --accent: #0EA5E9; --accent-dim: rgba(14, 165, 233, 0.1); }
 .accent_purple { --accent: #7C3AED; --accent-dim: rgba(124, 58, 237, 0.14); }
@@ -1077,7 +1077,7 @@
 
 .priceFeatured {
   border: 1px solid var(--gold);
-  box-shadow: 0 0 50px rgba(245, 166, 35, 0.14);
+  box-shadow: 0 0 50px rgba(0, 217, 126, 0.14);
 }
 
 .priceFeatured .popularBadge {
@@ -1198,7 +1198,7 @@
 /* ===== SECTION 11 - FINAL CTA ===== */
 .finalCta {
   padding: clamp(80px, 10vw, 140px) clamp(18px, 4vw, 40px);
-  background: linear-gradient(120deg, rgba(245, 166, 35, 0.16), #080808 45%, rgba(0, 217, 126, 0.16));
+  background: linear-gradient(120deg, rgba(0, 217, 126, 0.16), #080808 45%, rgba(0, 217, 126, 0.16));
   background-size: 200% 200%;
   animation: ctaShift 10s ease-in-out infinite;
 }
@@ -1351,7 +1351,7 @@
     background-size: 2px 12px;
   }
 
-  .flowArrow::after { content: "⌄"; right: 50%; top: auto; bottom: -10px; transform: translateX(50%); }
+  .flowArrow::after { content: "v"; right: 50%; top: auto; bottom: -10px; transform: translateX(50%); }
 
   .featureGrid { grid-template-columns: repeat(2, 1fr); }
 
