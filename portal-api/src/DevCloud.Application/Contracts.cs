@@ -1,8 +1,9 @@
-﻿using DevCloud.Domain.Enums;
+using DevCloud.Domain.Enums;
 
 namespace DevCloud.Application;
 
 public sealed record LoginRequest(string Email, string Password);
+public sealed record SetupOwnerRequest(string Email, string FullName, string Password);
 public sealed record RegisterRequest(string Email, string FullName, UserRole Role, string Password);
 public sealed record AuthResponse(Guid UserId, string Email, string FullName, UserRole Role, string AccessToken, string RefreshToken);
 
@@ -14,4 +15,3 @@ public sealed record AssignTicketRequest(Guid AssignedToId);
 public sealed record UpdateTicketStatusRequest(TicketStatus Status);
 public sealed record StartEnvironmentRequest(Guid ProjectId, Guid UserId, TechStack TechStack);
 public sealed record TriggerDeploymentRequest(Guid ProjectId, DeploymentEnvironment Environment, string? CommitHash, Guid DeployedById);
-

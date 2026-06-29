@@ -1,4 +1,4 @@
-﻿using DevCloud.Application;
+using DevCloud.Application;
 using DevCloud.Domain.Entities;
 using DevCloud.Domain.Enums;
 using DevCloud.Infrastructure.Auth;
@@ -26,6 +26,28 @@ public static class AuthEndpoints
             await db.SaveChangesAsync();
             WriteAuthCookies(http, accessToken, user.RefreshToken);
             return TypedResults.Ok(new AuthResponse(user.Id, user.Email, user.FullName, user.Role, accessToken, user.RefreshToken));
+        });
+
+        group.MapPost("/setup", async (SetupOwnerRequest request, DevCloudDbContext db, JwtTokenService tokens, HttpContext http) =>
+        {
+            if (await db.Users.AnyAsync())
+            {
+                return Results.Json(new { error = "Setup has already been completed." }, statusCode: StatusCodes.Status410Gone);
+            }
+
+            var user = new User
+            {
+                Email = request.Email,
+                FullName = request.FullName,
+                Role = UserRole.Owner,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
+                RefreshToken = JwtTokenService.CreateRefreshToken()
+            };
+            var accessToken = tokens.CreateAccessToken(user);
+            db.Users.Add(user);
+            await db.SaveChangesAsync();
+            WriteAuthCookies(http, accessToken, user.RefreshToken);
+            return Results.Created($"/api/users/{user.Id}", new AuthResponse(user.Id, user.Email, user.FullName, user.Role, accessToken, user.RefreshToken));
         });
 
         group.MapPost("/register", async (RegisterRequest request, DevCloudDbContext db, JwtTokenService tokens, HttpContext http) =>
