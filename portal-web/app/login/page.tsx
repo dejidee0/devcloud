@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import type { Route } from "next";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import styles from "./login.module.css";
 
@@ -20,7 +20,6 @@ type LoginResponse = {
 
 export default function LoginPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -61,7 +60,7 @@ export default function LoginPage() {
       }));
       document.cookie = `devcloud_portal_session=1; Path=/; Max-Age=${SESSION_MAX_AGE_SECONDS}; SameSite=Lax; Secure`;
 
-      const nextPath = searchParams.get("next");
+      const nextPath = new URLSearchParams(window.location.search).get("next");
       const redirectTo = nextPath?.startsWith("/") ? nextPath : "/dashboard";
       router.replace(redirectTo as Route);
     } catch (err) {
