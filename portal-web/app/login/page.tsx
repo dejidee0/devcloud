@@ -5,9 +5,10 @@ import type { Route } from "next";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
+import { publicApiUrl } from "@/lib/config";
 import styles from "./login.module.css";
 
-const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000").replace(/\/$/, "");
+const API_URL = publicApiUrl();
 const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 14;
 
 function cookieSecureSuffix() {
@@ -180,3 +181,5 @@ export default function LoginPage() {
     </main>
   );
 }
+
+

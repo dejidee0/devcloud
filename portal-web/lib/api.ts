@@ -1,4 +1,6 @@
-const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000").replace(/\/$/, "");
+import { publicApiUrl } from "@/lib/config";
+
+const API_URL = publicApiUrl();
 
 function readToken(): string | null {
   if (typeof window === "undefined") return null;
@@ -61,3 +63,5 @@ export function apiUrl(path: string) {
 export function authToken() {
   return readToken();
 }
+
+
