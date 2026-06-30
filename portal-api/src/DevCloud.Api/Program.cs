@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using DevCloud.Api.Endpoints;
 using DevCloud.Api.Hubs;
 using DevCloud.Api.Middleware;
+using DevCloud.Api.Services;
 using DevCloud.Application;
 using DevCloud.Infrastructure.Auth;
 using DevCloud.Infrastructure.Data;
@@ -39,7 +40,25 @@ builder.Services.AddDbContext<DevCloudDbContext>(options =>
 builder.Services.AddScoped<JwtTokenService>();
 builder.Services.AddScoped<DockerEnvironmentService>();
 builder.Services.AddScoped<InfrastructureStatusService>();
-builder.Services.AddSignalR();
+
+// Real-server + AI services
+builder.Services.AddSingleton<SshCommandRunner>();
+builder.Services.AddSingleton<ServerMonitorService>();
+builder.Services.AddScoped<DockerLiveService>();
+builder.Services.AddScoped<ReportPdfService>();
+builder.Services.AddScoped<AuditService>();
+builder.Services.AddScoped<SecurityScanRunner>();
+builder.Services.AddHttpClient<ClaudeAiService>(client =>
+{
+    client.Timeout = TimeSpan.FromMinutes(3);
+});
+builder.Services.AddHostedService<ScheduledSecurityScanJob>();
+
+builder.Services.AddSignalR().AddJsonProtocol(options =>
+{
+    options.PayloadSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+    options.PayloadSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
@@ -132,6 +151,7 @@ app.MapEnvironmentEndpoints();
 app.MapDeploymentEndpoints();
 app.MapSessionEndpoints();
 app.MapInfrastructureEndpoints();
+app.MapAiEndpoints();
 app.MapHub<ActivityHub>("/hubs/activity");
 
 _ = Task.Run(async () =>

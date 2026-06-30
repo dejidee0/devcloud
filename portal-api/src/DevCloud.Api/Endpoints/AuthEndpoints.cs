@@ -1,3 +1,4 @@
+using DevCloud.Api.Services;
 using DevCloud.Application;
 using DevCloud.Domain.Entities;
 using DevCloud.Domain.Enums;
@@ -15,7 +16,7 @@ public static class AuthEndpoints
         var group = app.MapGroup("/api/auth").WithTags("Auth");
 
         group.MapPost("/login", async Task<Results<Ok<AuthResponse>, UnauthorizedHttpResult>> (
-            LoginRequest request, DevCloudDbContext db, JwtTokenService tokens, HttpContext http) =>
+            LoginRequest request, DevCloudDbContext db, JwtTokenService tokens, AuditService audit, HttpContext http) =>
         {
             var user = await db.Users.SingleOrDefaultAsync(x => x.Email == request.Email && x.IsActive);
             if (user is null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash)) return TypedResults.Unauthorized();
@@ -25,6 +26,7 @@ public static class AuthEndpoints
             var accessToken = tokens.CreateAccessToken(user);
             await db.SaveChangesAsync();
             WriteAuthCookies(http, accessToken, user.RefreshToken);
+            await audit.LogSystemAsync("user.login", user.Email, null, user.Id, user.FullName);
             return TypedResults.Ok(new AuthResponse(user.Id, user.Email, user.FullName, user.Role, accessToken, user.RefreshToken));
         });
 

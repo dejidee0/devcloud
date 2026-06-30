@@ -13,6 +13,7 @@ public sealed class DevCloudDbContext(DbContextOptions<DevCloudDbContext> option
     public DbSet<Deployment> Deployments => Set<Deployment>();
     public DbSet<Session> Sessions => Set<Session>();
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+    public DbSet<SecurityScan> SecurityScans => Set<SecurityScan>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -67,6 +68,14 @@ public sealed class DevCloudDbContext(DbContextOptions<DevCloudDbContext> option
             b.Property(x => x.Action).HasMaxLength(120);
             b.Property(x => x.Resource).HasMaxLength(160);
             b.Property(x => x.IpAddress).HasMaxLength(80);
+        });
+
+        modelBuilder.Entity<SecurityScan>(b =>
+        {
+            b.Property(x => x.Status).HasConversion<string>().HasMaxLength(40);
+            b.Property(x => x.HighestSeverity).HasConversion<string>().HasMaxLength(40);
+            b.Property(x => x.Summary).HasMaxLength(4000);
+            b.HasOne(x => x.Project).WithMany().HasForeignKey(x => x.ProjectId).OnDelete(DeleteBehavior.SetNull);
         });
     }
 }

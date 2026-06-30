@@ -8,3 +8,5 @@ public enum TechStack { DotNet, NodeJS, Python, Java, React, Flutter, CPP }
 public enum DevEnvironmentStatus { Running, Stopped, Snapshotted }
 public enum DeploymentEnvironment { Staging, Production }
 public enum DeploymentStatus { Pending, Running, Success, Failed }
+public enum SecurityScanStatus { Pending, Running, Completed, Failed }
+public enum SecuritySeverity { Info, Low, Medium, High, Critical }

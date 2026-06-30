@@ -110,3 +110,24 @@ public sealed class AuditLog
     public string? IpAddress { get; set; }
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 }
+
+public sealed class SecurityScan
+{
+    public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid? ProjectId { get; set; }
+    public Project? Project { get; set; }
+    public SecurityScanStatus Status { get; set; } = SecurityScanStatus.Pending;
+    public SecuritySeverity HighestSeverity { get; set; } = SecuritySeverity.Info;
+    public int RiskScore { get; set; }
+    public int FindingsCount { get; set; }
+    /// <summary>JSON array of findings: { severity, title, detail, location, recommendation }.</summary>
+    public string FindingsJson { get; set; } = "[]";
+    public string? Summary { get; set; }
+    public Guid? TriggeredById { get; set; }
+    public User? TriggeredBy { get; set; }
+    public bool IsAutomated { get; set; }
+    public int? InputTokens { get; set; }
+    public int? OutputTokens { get; set; }
+    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset? CompletedAt { get; set; }
+}

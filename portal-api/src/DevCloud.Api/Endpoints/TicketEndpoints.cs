@@ -1,3 +1,4 @@
+using DevCloud.Api.Services;
 using DevCloud.Application;
 using DevCloud.Domain.Entities;
 using DevCloud.Infrastructure.Data;
@@ -14,7 +15,7 @@ public static class TicketEndpoints
             await db.Tickets.Where(x => projectId == null || x.ProjectId == projectId).OrderByDescending(x => x.UpdatedAt).ToListAsync());
         group.MapGet("/{id:guid}", async (Guid id, DevCloudDbContext db) =>
             await db.Tickets.FindAsync(id) is { } ticket ? Results.Ok(ticket) : Results.NotFound());
-        group.MapPost("/", async (UpsertTicketRequest request, DevCloudDbContext db) =>
+        group.MapPost("/", async (UpsertTicketRequest request, DevCloudDbContext db, AuditService audit, HttpContext http) =>
         {
             var ticket = new Ticket
             {
@@ -28,6 +29,7 @@ public static class TicketEndpoints
             };
             db.Tickets.Add(ticket);
             await db.SaveChangesAsync();
+            await audit.LogAsync("ticket.created", ticket.Title, $"Priority: {ticket.Priority}", http);
             return Results.Created($"/api/tickets/{ticket.Id}", ticket);
         });
         group.MapPut("/{id:guid}", async (Guid id, UpsertTicketRequest request, DevCloudDbContext db) =>
@@ -60,13 +62,14 @@ public static class TicketEndpoints
             await db.SaveChangesAsync();
             return Results.Ok(ticket);
         });
-        group.MapPut("/{id:guid}/status", async (Guid id, UpdateTicketStatusRequest request, DevCloudDbContext db) =>
+        group.MapPut("/{id:guid}/status", async (Guid id, UpdateTicketStatusRequest request, DevCloudDbContext db, AuditService audit, HttpContext http) =>
         {
             var ticket = await db.Tickets.FindAsync(id);
             if (ticket is null) return Results.NotFound();
             ticket.Status = request.Status;
             ticket.UpdatedAt = DateTimeOffset.UtcNow;
             await db.SaveChangesAsync();
+            await audit.LogAsync("ticket.updated", ticket.Title, $"Status: {ticket.Status}", http);
             return Results.Ok(ticket);
         });
         return group;

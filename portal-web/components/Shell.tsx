@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Activity, Boxes, Clock, FolderKanban, Gauge, KeyRound, ListChecks, Rocket, Search, Settings, Shield, Terminal, Users } from "lucide-react";
+import { Activity, Boxes, Clock, FileText, FolderKanban, Gauge, GitPullRequestArrow, KeyRound, ListChecks, ListPlus, Rocket, Search, Settings, Shield, ShieldCheck, Terminal, Users, Wand2 } from "lucide-react";
 import { TerminalPanel } from "@/components/TerminalPanel";
 import { CommandPalette } from "@/components/CommandPalette";
 
@@ -18,6 +18,16 @@ const nav = [
   ["/time-tracking", Clock, "Time"],
   ["/settings", Settings, "Settings"]
 ] as const;
+
+const aiNav = [
+  ["/ai/code-review", GitPullRequestArrow, "AI Code Review"],
+  ["/ai/environment-builder", Wand2, "AI Environment Builder"],
+  ["/ai/tickets", ListPlus, "AI Tickets"],
+  ["/ai/security", ShieldCheck, "AI Security"],
+  ["/ai/reports", FileText, "AI Reports"]
+] as const;
+
+const AI_PURPLE = "#b66bff";
 
 export function Shell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -35,6 +45,26 @@ export function Shell({ children }: { children: React.ReactNode }) {
             <Icon size={19} />
           </Link>
         ))}
+
+        <div title="AI Tools" style={{ marginTop: 6, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+          <div style={{ width: "70%", height: 1, background: "var(--border)" }} />
+          <span style={{ fontSize: 9, fontWeight: 800, letterSpacing: 0.5, color: AI_PURPLE, background: `${AI_PURPLE}1f`, border: `1px solid ${AI_PURPLE}55`, borderRadius: 5, padding: "1px 5px" }}>AI</span>
+        </div>
+
+        {aiNav.map(([href, Icon, label]) => {
+          const active = pathname.startsWith(href);
+          return (
+            <Link key={href} href={href} title={label} aria-label={label} style={{
+              position: "relative", height: 44, display: "grid", placeItems: "center", borderRadius: 6,
+              color: active ? AI_PURPLE : "var(--text-secondary)",
+              background: active ? `${AI_PURPLE}1a` : "transparent",
+              transition: "background 180ms cubic-bezier(0.16, 1, 0.3, 1)"
+            }}>
+              <Icon size={19} />
+              <span style={{ position: "absolute", top: 7, right: 9, width: 5, height: 5, borderRadius: 999, background: AI_PURPLE }} />
+            </Link>
+          );
+        })}
       </aside>
       <div style={{ minWidth: 0, paddingBottom: 220 }}>
         <header style={{ height: 56, borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", gap: 16, padding: "0 20px", background: "var(--bg-surface)" }}>

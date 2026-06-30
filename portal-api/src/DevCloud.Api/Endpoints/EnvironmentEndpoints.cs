@@ -1,3 +1,4 @@
+using DevCloud.Api.Services;
 using DevCloud.Application;
 using DevCloud.Domain.Entities;
 using DevCloud.Domain.Enums;
@@ -13,6 +14,55 @@ public static class EnvironmentEndpoints
     {
         var group = app.MapGroup("/api/environments").WithTags("Environments").RequireAuthorization();
         group.MapGet("/", async (DevCloudDbContext db) => await db.DevEnvironments.OrderByDescending(x => x.LastActive).ToListAsync());
+
+        // Real running containers read from the Hetzner host over SSH.
+        group.MapGet("/live", async (DockerLiveService docker, CancellationToken ct) =>
+        {
+            if (string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("DEVCLOUD_SSH_KEY")))
+            {
+                return Results.Json(new { error = "DEVCLOUD_SSH_KEY is not configured on the server." }, statusCode: StatusCodes.Status503ServiceUnavailable);
+            }
+            try
+            {
+                return Results.Ok(new { containers = await docker.ListContainersAsync(ct), checkedAt = DateTimeOffset.UtcNow });
+            }
+            catch (Exception ex)
+            {
+                return Results.Json(new { error = $"Failed to read containers: {ex.Message}" }, statusCode: StatusCodes.Status502BadGateway);
+            }
+        });
+
+        group.MapGet("/live/stacks", () => Results.Ok(DockerLiveService.SupportedStacks));
+
+        // Start a real container for the chosen stack from /environments/{stack}/Dockerfile on the server.
+        group.MapPost("/live/start", async (StartLiveEnvironmentRequest request, DockerLiveService docker, AuditService audit, HttpContext http, CancellationToken ct) =>
+        {
+            if (string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("DEVCLOUD_SSH_KEY")))
+            {
+                return Results.Json(new { error = "DEVCLOUD_SSH_KEY is not configured on the server." }, statusCode: StatusCodes.Status503ServiceUnavailable);
+            }
+            try
+            {
+                var container = await docker.StartStackAsync(request.Stack, ct);
+                await audit.LogAsync("environment.started", request.Stack, $"Started {container.Name}", http, ct);
+                return Results.Ok(container);
+            }
+            catch (ArgumentException ex)
+            {
+                return Results.BadRequest(new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return Results.Json(new { error = $"Failed to start environment: {ex.Message}" }, statusCode: StatusCodes.Status502BadGateway);
+            }
+        });
+
+        group.MapPost("/live/stop", async (StartLiveEnvironmentRequest request, DockerLiveService docker, AuditService audit, HttpContext http, CancellationToken ct) =>
+        {
+            var output = await docker.StopAsync(request.Stack, ct);
+            await audit.LogAsync("environment.stopped", request.Stack, output.Trim(), http, ct);
+            return Results.Ok(new { output });
+        });
         group.MapPost("/start", async (StartEnvironmentRequest request, DevCloudDbContext db, DockerEnvironmentService docker, CancellationToken ct) =>
         {
             var env = new DevEnvironment

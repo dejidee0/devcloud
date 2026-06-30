@@ -1,3 +1,4 @@
+using DevCloud.Api.Services;
 using DevCloud.Application;
 using DevCloud.Domain.Entities;
 using DevCloud.Domain.Enums;
@@ -13,7 +14,7 @@ public static class DeploymentEndpoints
         var group = app.MapGroup("/api/deployments").WithTags("Deployments").RequireAuthorization();
         group.MapGet("/", async (Guid? projectId, DevCloudDbContext db) =>
             await db.Deployments.Where(x => projectId == null || x.ProjectId == projectId).OrderByDescending(x => x.StartedAt).ToListAsync());
-        group.MapPost("/", async (TriggerDeploymentRequest request, DevCloudDbContext db) =>
+        group.MapPost("/", async (TriggerDeploymentRequest request, DevCloudDbContext db, AuditService audit, HttpContext http) =>
         {
             var deployment = new Deployment
             {
@@ -26,6 +27,7 @@ public static class DeploymentEndpoints
             };
             db.Deployments.Add(deployment);
             await db.SaveChangesAsync();
+            await audit.LogAsync("deployment.triggered", $"{request.Environment}", $"Commit: {request.CommitHash ?? "n/a"}", http);
             return Results.Created($"/api/deployments/{deployment.Id}", deployment);
         }).RequireAuthorization(RolePolicies.Leadership);
         group.MapPost("/{id:guid}/rollback", async (Guid id, DevCloudDbContext db) =>

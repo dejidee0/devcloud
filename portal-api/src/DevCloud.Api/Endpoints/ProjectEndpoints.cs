@@ -1,3 +1,4 @@
+using DevCloud.Api.Services;
 using DevCloud.Application;
 using DevCloud.Domain.Entities;
 using DevCloud.Infrastructure.Data;
@@ -13,7 +14,7 @@ public static class ProjectEndpoints
         group.MapGet("/", async (DevCloudDbContext db) => await db.Projects.OrderByDescending(x => x.CreatedAt).ToListAsync());
         group.MapGet("/{id:guid}", async (Guid id, DevCloudDbContext db) =>
             await db.Projects.FindAsync(id) is { } project ? Results.Ok(project) : Results.NotFound());
-        group.MapPost("/", async (UpsertProjectRequest request, DevCloudDbContext db) =>
+        group.MapPost("/", async (UpsertProjectRequest request, DevCloudDbContext db, AuditService audit, HttpContext http) =>
         {
             var project = new Project
             {
@@ -26,6 +27,7 @@ public static class ProjectEndpoints
             };
             db.Projects.Add(project);
             await db.SaveChangesAsync();
+            await audit.LogAsync("project.created", project.Name, $"Client: {project.ClientName}", http);
             return Results.Created($"/api/projects/{project.Id}", project);
         }).RequireAuthorization(RolePolicies.Leadership);
         group.MapPut("/{id:guid}", async (Guid id, UpsertProjectRequest request, DevCloudDbContext db) =>

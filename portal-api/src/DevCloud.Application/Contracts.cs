@@ -15,3 +15,13 @@ public sealed record AssignTicketRequest(Guid AssignedToId);
 public sealed record UpdateTicketStatusRequest(TicketStatus Status);
 public sealed record StartEnvironmentRequest(Guid ProjectId, Guid UserId, TechStack TechStack);
 public sealed record TriggerDeploymentRequest(Guid ProjectId, DeploymentEnvironment Environment, string? CommitHash, Guid DeployedById);
+
+// AI feature requests
+public sealed record ReviewCodeRequest(string? ProjectPath, string Diff);
+public sealed record BuildEnvironmentRequest(string Description);
+public sealed record GenerateTicketsRequest(Guid ProjectId, string FeatureDescription);
+public sealed record ConfirmTicketsRequest(Guid ProjectId, IReadOnlyList<GeneratedTicket> Tickets);
+public sealed record GeneratedTicket(string Title, string? Description, string? AcceptanceCriteria, string? SuggestedAssigneeRole, TicketPriority Priority);
+public sealed record SecurityScanRequest(Guid ProjectId);
+public sealed record GenerateReportRequest(Guid ProjectId, DateTimeOffset StartDate, DateTimeOffset EndDate);
+public sealed record StartLiveEnvironmentRequest(string Stack);
