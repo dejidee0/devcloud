@@ -48,6 +48,19 @@ public sealed class SshCommandRunner
         return new PrivateKeyFile(stream);
     }
 
+    /// <summary>Creates and connects an SshClient for interactive shell sessions. Caller owns disposal.</summary>
+    public SshClient CreateConnectedClient()
+    {
+        var key = LoadKey();
+        var connectionInfo = new ConnectionInfo(Host, Port, User, new PrivateKeyAuthenticationMethod(User, key))
+        {
+            Timeout = TimeSpan.FromSeconds(15)
+        };
+        var client = new SshClient(connectionInfo);
+        client.Connect();
+        return client;
+    }
+
     /// <summary>Runs a single command and returns stdout (or stderr if the command failed).</summary>
     public Task<string> RunAsync(string command, CancellationToken cancellationToken = default) =>
         RunManyAsync(new[] { command }, cancellationToken).ContinueWith(t => t.Result[command], cancellationToken);

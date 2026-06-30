@@ -63,6 +63,25 @@ public static class EnvironmentEndpoints
             await audit.LogAsync("environment.stopped", request.Stack, output.Trim(), http, ct);
             return Results.Ok(new { output });
         });
+
+        // Start an existing (stopped) container by name: docker start {name}.
+        group.MapPost("/live/restart", async (StartLiveEnvironmentRequest request, DockerLiveService docker, AuditService audit, HttpContext http, CancellationToken ct) =>
+        {
+            if (string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("DEVCLOUD_SSH_KEY")))
+            {
+                return Results.Json(new { error = "DEVCLOUD_SSH_KEY is not configured on the server." }, statusCode: StatusCodes.Status503ServiceUnavailable);
+            }
+            try
+            {
+                var output = await docker.StartExistingAsync(request.Stack, ct);
+                await audit.LogAsync("environment.started", request.Stack, $"Started container {request.Stack}", http, ct);
+                return Results.Ok(new { output });
+            }
+            catch (Exception ex)
+            {
+                return Results.Json(new { error = $"Failed to start container: {ex.Message}" }, statusCode: StatusCodes.Status502BadGateway);
+            }
+        });
         group.MapPost("/start", async (StartEnvironmentRequest request, DevCloudDbContext db, DockerEnvironmentService docker, CancellationToken ct) =>
         {
             var env = new DevEnvironment

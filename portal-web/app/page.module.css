@@ -1328,8 +1328,24 @@
 }
 
 /* ===== RESPONSIVE ===== */
+.hamburger { display: none; }
+.mobileMenu { display: none; }
+
 @media (max-width: 920px) {
   .navLinks { display: none; }
+  .navActions .ghostBtn { display: none; }
+  .hamburger {
+    display: grid; place-items: center; width: 42px; height: 42px;
+    background: transparent; border: 1px solid var(--border-strong); border-radius: 10px; color: var(--text-primary); cursor: pointer;
+  }
+  .mobileMenu {
+    display: flex; flex-direction: column; gap: 6px; padding: 12px 20px 18px;
+    border-top: 1px solid var(--border); background: var(--bg-surface);
+  }
+  .mobileMenu button, .mobileMenu a {
+    text-align: left; padding: 12px 10px; min-height: 44px; border-radius: 8px;
+    background: transparent; border: none; color: var(--text-primary); font-size: 15px; cursor: pointer;
+  }
 
   .heroInner { grid-template-columns: 1fr; }
 

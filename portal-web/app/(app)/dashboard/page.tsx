@@ -107,7 +107,7 @@ export default function DashboardPage() {
       </section>
 
       {/* MIDDLE — two columns */}
-      <section style={{ display: "grid", gridTemplateColumns: "minmax(0, 6fr) minmax(0, 4fr)", gap: 16 }}>
+      <section className="dash-main">
         <div style={{ display: "grid", gap: 16 }}>
           <Card>
             <SectionTitle action={<PulseDot />}>Live Activity</SectionTitle>

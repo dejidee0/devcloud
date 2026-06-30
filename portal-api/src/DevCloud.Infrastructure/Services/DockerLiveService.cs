@@ -96,6 +96,10 @@ public sealed class DockerLiveService
     public Task<string> StopAsync(string containerName, CancellationToken cancellationToken) =>
         _ssh.RunAsync($"docker stop {Sanitize(containerName)}", cancellationToken);
 
+    /// <summary>Starts an existing (stopped) container by name: docker start {name}.</summary>
+    public Task<string> StartExistingAsync(string containerName, CancellationToken cancellationToken) =>
+        _ssh.RunAsync($"docker start {Sanitize(containerName)}", cancellationToken);
+
     private LiveContainer? ParseFirst(string raw)
     {
         foreach (var line in raw.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))

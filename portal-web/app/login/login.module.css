@@ -345,9 +345,9 @@
   }
 
   .terminalPanel {
-    min-height: 380px;
+    min-height: 240px;
     order: -1;
-    padding: 28px 18px;
+    padding: 20px 16px;
   }
 
   .formPanel {

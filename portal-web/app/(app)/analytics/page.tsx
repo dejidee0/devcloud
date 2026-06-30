@@ -24,8 +24,8 @@ interface Analytics {
 }
 interface NetCheck { at: string; status: string; ip: string; }
 
-const GOLD = "#caa24a", GREEN = "#00D97E", BLUE = "#3b9eff", PURPLE = "#b66bff", RED = "#FF3B30";
-const STACK_COLORS = [GREEN, BLUE, PURPLE, GOLD, "#ff6b9e", "#2dd4bf", "#f5a623"];
+const GOLD = "#F5A623", GREEN = "#00D97E", BLUE = "#0EA5E9", PURPLE = "#8B5CF6", RED = "#FF3B30", ORANGE = "#FB923C", CYAN = "#22D3EE";
+const STACK_COLORS = [GREEN, BLUE, PURPLE, GOLD, "#EC4899", CYAN, ORANGE];
 const axis = { stroke: "#333", fontSize: 11, tick: { fill: "#888" } };
 const tooltipStyle = { background: "#0f0f0f", border: "1px solid #2a2a2a", borderRadius: 8, fontSize: 12, color: "#ededed" };
 
@@ -58,7 +58,7 @@ export default function AnalyticsPage() {
       </section>
 
       {/* Chart grid */}
-      <section style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))", gap: 16 }}>
+      <section className="responsive-grid">
         <Reveal><ChartCard title="Team Activity Over Time">
           {data.loading ? <SkeletonLoader rows={4} /> : (
             <ResponsiveContainer width="100%" height={240}>
@@ -129,9 +129,9 @@ export default function AnalyticsPage() {
                 <YAxis {...axis} domain={[0, 100]} />
                 <Tooltip contentStyle={tooltipStyle} labelFormatter={(v) => new Date(v as string).toLocaleString()} />
                 <Legend wrapperStyle={{ fontSize: 12 }} />
-                <Line type="monotone" dataKey="cpu" stroke={GREEN} dot={false} strokeWidth={2} />
-                <Line type="monotone" dataKey="ram" stroke={BLUE} dot={false} strokeWidth={2} />
-                <Line type="monotone" dataKey="disk" stroke={GOLD} dot={false} strokeWidth={2} />
+                <Line type="monotone" dataKey="cpu" stroke={BLUE} dot={false} strokeWidth={2} />
+                <Line type="monotone" dataKey="ram" stroke={PURPLE} dot={false} strokeWidth={2} />
+                <Line type="monotone" dataKey="disk" stroke={ORANGE} dot={false} strokeWidth={2} />
               </LineChart>
             </ResponsiveContainer>
           )}

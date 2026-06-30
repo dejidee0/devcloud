@@ -69,7 +69,7 @@ export default function AiSecurityPage() {
         {error ? <p className="error-line" style={{ marginTop: 10 }}>{error}</p> : null}
       </Card>
 
-      <section style={{ display: "grid", gridTemplateColumns: "minmax(0, 5fr) minmax(0, 7fr)", gap: 16 }}>
+      <section className="split-2">
         <Card>
           <SectionTitle>Scan History</SectionTitle>
           {history.loading ? <p style={{ color: "var(--text-muted)" }}>Loading…</p> : (

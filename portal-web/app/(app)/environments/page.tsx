@@ -41,17 +41,27 @@ export default function EnvironmentsPage() {
     }
   }
 
+  async function restart(name: string) {
+    setError(null);
+    try {
+      await api("/api/environments/live/restart", { method: "POST", body: JSON.stringify({ stack: name }) });
+      await live.refresh();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    }
+  }
+
   const containers = live.data?.containers ?? [];
 
   return (
     <div style={{ display: "grid", gap: 18 }}>
-      <header style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        <Boxes color="var(--brand)" />
-        <h1 style={{ marginRight: "auto", margin: 0, fontSize: 22 }}>Environments</h1>
+      <header style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+        <Boxes color="var(--cyan)" />
+        <h1 style={{ marginRight: "auto", margin: 0 }}>Environments</h1>
         <select value={stack} onChange={(e) => setStack(e.target.value)} title="Stack">
           {STACKS.map((s) => <option key={s} value={s}>{s}</option>)}
         </select>
-        <button onClick={start} disabled={starting} style={{ display: "flex", alignItems: "center", gap: 6, background: "var(--brand)", color: "#0b0b0b", fontWeight: 600 }}>
+        <button className="btn-primary" onClick={start} disabled={starting} style={{ display: "flex", alignItems: "center", gap: 6 }}>
           <Play size={15} /> {starting ? "Starting…" : "Start Environment"}
         </button>
       </header>
@@ -69,19 +79,26 @@ export default function EnvironmentsPage() {
           </p>
         ) : (
           <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", fontSize: 13 }}>
-              <thead><tr><th>Name</th><th>Image</th><th>Status</th><th>Ports</th><th></th></tr></thead>
+            <table className="responsive-table" style={{ width: "100%", fontSize: 13 }}>
+              <thead><tr><th>Name</th><th>Image</th><th>Status</th><th>Ports</th><th>Action</th></tr></thead>
               <tbody>
-                {containers.map((c) => (
-                  <tr key={c.id}>
-                    <td className="mono">{c.name}</td>
-                    <td style={{ color: "var(--text-secondary)" }}>{c.image}</td>
-                    <td><span style={{ color: c.state?.toLowerCase() === "running" ? "var(--brand)" : "var(--text-secondary)" }}>{c.status}</span></td>
-                    <td className="mono" style={{ color: "var(--text-muted)", fontSize: 11 }}>{c.ports || "—"}</td>
-                    <td>{c.state?.toLowerCase() === "running" ? <button style={{ fontSize: 12, padding: "4px 8px" }} onClick={() => stop(c.name)}>Stop</button> : null}</td>
-                  </tr>
-                ))}
-                {containers.length === 0 ? <tr><td colSpan={5} style={{ color: "var(--text-muted)" }}>No containers running.</td></tr> : null}
+                {containers.map((c) => {
+                  const running = c.state?.toLowerCase() === "running";
+                  return (
+                    <tr key={c.id}>
+                      <td data-label="Name" className="mono">{c.name}</td>
+                      <td data-label="Image" style={{ color: "var(--text-secondary)" }}>{c.image}</td>
+                      <td data-label="Status"><span style={{ color: running ? "var(--green)" : c.state?.toLowerCase() === "exited" ? "var(--red)" : "var(--text-secondary)" }}>{c.status}</span></td>
+                      <td data-label="Ports" className="mono" style={{ color: "var(--text-muted)", fontSize: 11 }}>{c.ports || "—"}</td>
+                      <td data-label="Action">
+                        {running
+                          ? <button onClick={() => stop(c.name)} style={{ fontSize: 12, padding: "5px 12px" }}>Stop</button>
+                          : <button onClick={() => restart(c.name)} style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 12, padding: "5px 12px", color: "var(--green)", borderColor: "var(--green)" }}><Play size={13} /> Start</button>}
+                      </td>
+                    </tr>
+                  );
+                })}
+                {containers.length === 0 ? <tr><td colSpan={5} style={{ color: "var(--text-muted)" }}>No containers found.</td></tr> : null}
               </tbody>
             </table>
           </div>

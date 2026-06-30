@@ -9,6 +9,7 @@ import {
   Globe,
   KeyRound,
   MapPin,
+  Menu,
   Rocket,
   ShieldCheck,
   Terminal,
@@ -331,6 +332,8 @@ function GlobalInfrastructure() {
 }
 
 export default function Home() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   useEffect(() => {
     const targets = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
     const observer = new IntersectionObserver(
@@ -362,8 +365,21 @@ export default function Home() {
           <div className={styles.navActions}>
             <Link href="/login" className={styles.ghostBtn}>Sign in</Link>
             <Link href="/signup" className={styles.goldBtn}>Get Started Free</Link>
+            <button type="button" className={styles.hamburger} aria-label="Open menu" onClick={() => setMenuOpen((v) => !v)}>
+              {menuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
           </div>
         </div>
+        {menuOpen ? (
+          <div className={styles.mobileMenu}>
+            <button type="button" onClick={() => { setMenuOpen(false); scrollToId("features"); }}>Features</button>
+            <button type="button" onClick={() => { setMenuOpen(false); scrollToId("how-it-works"); }}>How It Works</button>
+            <button type="button" onClick={() => { setMenuOpen(false); scrollToId("ai-features"); }}>AI Features</button>
+            <button type="button" onClick={() => { setMenuOpen(false); scrollToId("pricing"); }}>Pricing</button>
+            <Link href="/login" onClick={() => setMenuOpen(false)}>Sign in</Link>
+            <Link href="/signup" className={styles.goldBtn} onClick={() => setMenuOpen(false)}>Get Started Free</Link>
+          </div>
+        ) : null}
       </header>
 
       <section className={styles.hero}>

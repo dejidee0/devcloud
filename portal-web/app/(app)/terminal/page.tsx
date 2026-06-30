@@ -1,13 +1,22 @@
-import { TerminalPanel } from "@/components/TerminalPanel";
+"use client";
+
+import dynamic from "next/dynamic";
+import { Terminal as TerminalIcon } from "lucide-react";
+
+const InteractiveTerminal = dynamic(() => import("@/components/InteractiveTerminal").then((m) => m.InteractiveTerminal), {
+  ssr: false,
+  loading: () => <p style={{ color: "var(--text-secondary)" }}>Loading terminal…</p>
+});
 
 export default function TerminalPage() {
   return (
     <div style={{ display: "grid", gap: 16 }}>
-      <h1>Terminal</h1>
-      <p style={{ color: "var(--text-secondary)" }}>Teleport WebSocket target: <code className="mono">https://codemonk-devcloud-01:3080</code></p>
-      <div style={{ height: 320, border: "1px solid var(--border)", borderRadius: 8, overflow: "hidden", position: "relative" }}>
-        <TerminalPanel />
-      </div>
+      <header style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <TerminalIcon color="var(--cyan)" />
+        <h1 style={{ margin: 0 }}>Terminal</h1>
+        <span style={{ color: "var(--text-secondary)", fontSize: 13 }}>Live root shell on the Hetzner host (Owner only)</span>
+      </header>
+      <InteractiveTerminal />
     </div>
   );
 }

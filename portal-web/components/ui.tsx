@@ -1,4 +1,5 @@
 import type { CSSProperties, HTMLAttributes, ReactNode } from "react";
+import { avatarColor } from "@/lib/colors";
 
 export function Card({ children, style, accent, ...rest }: { children: ReactNode; style?: CSSProperties; accent?: boolean } & HTMLAttributes<HTMLElement>) {
   return (
@@ -80,7 +81,6 @@ export function PulseDot({ color = "var(--brand)" }: { color?: string }) {
 
 export function Avatar({ name, index = 0 }: { name: string; index?: number }) {
   const initials = name.split(" ").map((p) => p[0]).slice(0, 2).join("").toUpperCase();
-  const hues = ["#00D97E", "#3b9eff", "#F5A623", "#b66bff", "#ff6b9e"];
   return (
     <span
       title={name}
@@ -93,7 +93,7 @@ export function Avatar({ name, index = 0 }: { name: string; index?: number }) {
         fontSize: 11,
         fontWeight: 700,
         color: "#0b0b0b",
-        background: hues[index % hues.length],
+        background: avatarColor(name || String(index)),
         border: "2px solid #0f0f0f",
         marginLeft: index === 0 ? 0 : -8
       }}

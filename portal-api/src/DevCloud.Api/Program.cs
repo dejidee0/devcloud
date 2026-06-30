@@ -156,6 +156,7 @@ app.MapInfrastructureEndpoints();
 app.MapAiEndpoints();
 app.MapAnalyticsEndpoints();
 app.MapHub<ActivityHub>("/hubs/activity");
+app.MapHub<TerminalHub>("/hubs/terminal");
 
 _ = Task.Run(async () =>
 {
