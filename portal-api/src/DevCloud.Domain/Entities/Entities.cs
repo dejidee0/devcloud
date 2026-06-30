@@ -111,6 +111,17 @@ public sealed class AuditLog
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 }
 
+public sealed class ServerMetricSnapshot
+{
+    public Guid Id { get; set; } = Guid.NewGuid();
+    public double CpuPercent { get; set; }
+    public int RamUsedMb { get; set; }
+    public int RamTotalMb { get; set; }
+    public double DiskUsedGb { get; set; }
+    public double DiskTotalGb { get; set; }
+    public DateTimeOffset CapturedAt { get; set; } = DateTimeOffset.UtcNow;
+}
+
 public sealed class SecurityScan
 {
     public Guid Id { get; set; } = Guid.NewGuid();

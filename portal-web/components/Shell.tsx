@@ -1,71 +1,131 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import type { Route } from "next";
 import { usePathname } from "next/navigation";
-import { Activity, Boxes, Clock, FileText, FolderKanban, Gauge, GitPullRequestArrow, KeyRound, ListChecks, ListPlus, Rocket, Search, Settings, Shield, ShieldCheck, Terminal, Users, Wand2 } from "lucide-react";
+import {
+  Activity, BarChart3, Boxes, ChevronLeft, ChevronRight, Clock, FileText, FolderKanban, Gauge,
+  GitPullRequestArrow, KeyRound, ListPlus, Rocket, Search, Settings, Shield, ShieldCheck, Terminal, Users, Wand2
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { TerminalPanel } from "@/components/TerminalPanel";
 import { CommandPalette } from "@/components/CommandPalette";
 
-const nav = [
+type NavItem = readonly [string, LucideIcon, string];
+
+const MAIN: readonly NavItem[] = [
   ["/dashboard", Gauge, "Dashboard"],
+  ["/analytics", BarChart3, "Analytics"],
   ["/projects", FolderKanban, "Projects"],
   ["/team", Users, "Team"],
   ["/environments", Boxes, "Environments"],
   ["/terminal", Terminal, "Terminal"],
-  ["/deployments", Rocket, "Deployments"],
+  ["/deployments", Rocket, "Deployments"]
+];
+
+const AI_TOOLS: readonly NavItem[] = [
+  ["/ai/code-review", GitPullRequestArrow, "Code Review"],
+  ["/ai/environment-builder", Wand2, "Environment Builder"],
+  ["/ai/tickets", ListPlus, "Tickets"],
+  ["/ai/security", ShieldCheck, "Security"],
+  ["/ai/reports", FileText, "Reports"]
+];
+
+const ADMIN: readonly NavItem[] = [
   ["/audit", Shield, "Audit"],
   ["/secrets", KeyRound, "Secrets"],
-  ["/time-tracking", Clock, "Time"],
+  ["/time-tracking", Clock, "Time Tracking"],
   ["/settings", Settings, "Settings"]
-] as const;
-
-const aiNav = [
-  ["/ai/code-review", GitPullRequestArrow, "AI Code Review"],
-  ["/ai/environment-builder", Wand2, "AI Environment Builder"],
-  ["/ai/tickets", ListPlus, "AI Tickets"],
-  ["/ai/security", ShieldCheck, "AI Security"],
-  ["/ai/reports", FileText, "AI Reports"]
-] as const;
+];
 
 const AI_PURPLE = "#b66bff";
+const STORAGE_KEY = "devcloud_sidebar_collapsed";
 
 export function Shell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  return (
-    <div style={{ minHeight: "100vh", display: "grid", gridTemplateColumns: "64px 1fr", background: "var(--bg-base)" }}>
-      <aside style={{ borderRight: "1px solid var(--border)", background: "var(--bg-surface)", padding: "10px 8px", display: "flex", flexDirection: "column", gap: 8 }}>
-        <div title="DevCloud" style={{ height: 44, display: "grid", placeItems: "center", color: "var(--brand)", fontWeight: 800 }}>DC</div>
-        {nav.map(([href, Icon, label]) => (
-          <Link key={href} href={href} title={label} aria-label={label} style={{
-            height: 44, display: "grid", placeItems: "center", borderRadius: 6,
-            color: pathname.startsWith(href) ? "var(--brand)" : "var(--text-secondary)",
-            background: pathname.startsWith(href) ? "var(--brand-dim)" : "transparent",
-            transition: "background 180ms cubic-bezier(0.16, 1, 0.3, 1)"
-          }}>
-            <Icon size={19} />
-          </Link>
-        ))}
+  const [collapsed, setCollapsed] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
 
-        <div title="AI Tools" style={{ marginTop: 6, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
-          <div style={{ width: "70%", height: 1, background: "var(--border)" }} />
-          <span style={{ fontSize: 9, fontWeight: 800, letterSpacing: 0.5, color: AI_PURPLE, background: `${AI_PURPLE}1f`, border: `1px solid ${AI_PURPLE}55`, borderRadius: 5, padding: "1px 5px" }}>AI</span>
-        </div>
+  useEffect(() => {
+    setCollapsed(window.localStorage.getItem(STORAGE_KEY) === "true");
+    setHydrated(true);
+  }, []);
 
-        {aiNav.map(([href, Icon, label]) => {
+  function toggle() {
+    setCollapsed((prev) => {
+      const next = !prev;
+      window.localStorage.setItem(STORAGE_KEY, String(next));
+      return next;
+    });
+  }
+
+  const width = collapsed ? 64 : 240;
+
+  function renderGroup(label: string, items: readonly NavItem[], accent?: string) {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        {collapsed ? (
+          <div style={{ height: 1, background: "var(--border)", margin: "10px 12px 6px" }} />
+        ) : (
+          <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "14px 16px 6px", fontSize: 10, fontWeight: 700, letterSpacing: 1, color: "var(--text-muted)" }}>
+            {label}
+            {accent ? <span style={{ fontSize: 9, fontWeight: 800, color: accent, background: `${accent}1f`, border: `1px solid ${accent}55`, borderRadius: 5, padding: "0px 4px" }}>AI</span> : null}
+          </div>
+        )}
+        {items.map(([href, Icon, text]) => {
           const active = pathname.startsWith(href);
+          const activeColor = accent ?? "var(--brand)";
           return (
-            <Link key={href} href={href} title={label} aria-label={label} style={{
-              position: "relative", height: 44, display: "grid", placeItems: "center", borderRadius: 6,
-              color: active ? AI_PURPLE : "var(--text-secondary)",
-              background: active ? `${AI_PURPLE}1a` : "transparent",
-              transition: "background 180ms cubic-bezier(0.16, 1, 0.3, 1)"
-            }}>
-              <Icon size={19} />
-              <span style={{ position: "absolute", top: 7, right: 9, width: 5, height: 5, borderRadius: 999, background: AI_PURPLE }} />
+            <Link
+              key={href}
+              href={href as Route}
+              title={collapsed ? text : undefined}
+              aria-label={text}
+              style={{
+                position: "relative",
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                padding: collapsed ? "10px 0" : "10px 16px",
+                justifyContent: collapsed ? "center" : "flex-start",
+                margin: "0 8px",
+                borderRadius: 8,
+                color: active ? "#ffffff" : "var(--text-secondary)",
+                background: active ? "var(--brand-dim)" : "transparent",
+                borderLeft: active ? `3px solid ${activeColor}` : "3px solid transparent",
+                transition: "background 160ms cubic-bezier(0.16,1,0.3,1), color 160ms",
+                whiteSpace: "nowrap"
+              }}
+              onMouseEnter={(e) => { if (!active) e.currentTarget.style.background = "var(--bg-hover)"; }}
+              onMouseLeave={(e) => { if (!active) e.currentTarget.style.background = "transparent"; }}
+            >
+              <Icon size={20} color={active ? activeColor : undefined} style={{ flexShrink: 0 }} />
+              {!collapsed ? <span style={{ fontSize: 14 }}>{text}</span> : null}
             </Link>
           );
         })}
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ minHeight: "100vh", display: "grid", gridTemplateColumns: `${width}px 1fr`, background: "var(--bg-base)", transition: "grid-template-columns 180ms cubic-bezier(0.16,1,0.3,1)" }}>
+      <aside style={{ borderRight: "1px solid var(--border)", background: "var(--bg-surface)", padding: "10px 0", display: "flex", flexDirection: "column", gap: 2, overflowY: "auto", overflowX: "hidden" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: collapsed ? "center" : "space-between", padding: collapsed ? "6px 0 10px" : "6px 16px 10px", gap: 8 }}>
+          {!collapsed ? <span style={{ color: "var(--brand)", fontWeight: 800, fontSize: 18, letterSpacing: -0.5 }}>DevCloud</span> : <span style={{ color: "var(--brand)", fontWeight: 800, fontSize: 16 }}>DC</span>}
+          {hydrated ? (
+            <button onClick={toggle} title={collapsed ? "Expand" : "Collapse"} aria-label="Toggle sidebar" style={{ padding: 4, display: "grid", placeItems: "center", background: "transparent", border: "1px solid var(--border-strong)", borderRadius: 6, color: "var(--text-secondary)", position: collapsed ? "absolute" : "static", top: collapsed ? 8 : undefined, right: collapsed ? 8 : undefined }}>
+              {collapsed ? <ChevronRight size={15} /> : <ChevronLeft size={15} />}
+            </button>
+          ) : null}
+        </div>
+
+        {renderGroup("MAIN", MAIN)}
+        {renderGroup("AI TOOLS", AI_TOOLS, AI_PURPLE)}
+        {renderGroup("ADMIN", ADMIN)}
       </aside>
+
       <div style={{ minWidth: 0, paddingBottom: 220 }}>
         <header style={{ height: 56, borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", gap: 16, padding: "0 20px", background: "var(--bg-surface)" }}>
           <Activity size={17} color="var(--brand)" />

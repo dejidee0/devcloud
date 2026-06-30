@@ -44,6 +44,7 @@ builder.Services.AddScoped<InfrastructureStatusService>();
 // Real-server + AI services
 builder.Services.AddSingleton<SshCommandRunner>();
 builder.Services.AddSingleton<ServerMonitorService>();
+builder.Services.AddSingleton<NetworkVerificationService>();
 builder.Services.AddScoped<DockerLiveService>();
 builder.Services.AddScoped<ReportPdfService>();
 builder.Services.AddScoped<AuditService>();
@@ -53,6 +54,7 @@ builder.Services.AddHttpClient<ClaudeAiService>(client =>
     client.Timeout = TimeSpan.FromMinutes(3);
 });
 builder.Services.AddHostedService<ScheduledSecurityScanJob>();
+builder.Services.AddHostedService<ServerMetricSnapshotJob>();
 
 builder.Services.AddSignalR().AddJsonProtocol(options =>
 {
@@ -152,6 +154,7 @@ app.MapDeploymentEndpoints();
 app.MapSessionEndpoints();
 app.MapInfrastructureEndpoints();
 app.MapAiEndpoints();
+app.MapAnalyticsEndpoints();
 app.MapHub<ActivityHub>("/hubs/activity");
 
 _ = Task.Run(async () =>

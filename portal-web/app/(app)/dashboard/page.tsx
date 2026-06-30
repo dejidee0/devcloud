@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowUpRight, Boxes, Cpu, FileText, Lock, Plus, Rocket, Shield, Sparkles, Users } from "lucide-react";
 import { ActivityFeed } from "@/components/ActivityFeed";
+import { NetworkVerificationCard } from "@/components/NetworkVerificationCard";
 import { Avatar, Card, ProgressBar, PulseDot, SectionTitle, SeverityBadge } from "@/components/ui";
 import { SkeletonLoader } from "@/components/SkeletonLoader";
 import { TechStackBadge } from "@/components/TechStackBadge";
@@ -150,6 +151,8 @@ export default function DashboardPage() {
               </div>
             ) : null}
           </Card>
+
+          <NetworkVerificationCard />
 
           <Card>
             <SectionTitle action={<Sparkles size={15} color="#b66bff" />}>AI Insights</SectionTitle>

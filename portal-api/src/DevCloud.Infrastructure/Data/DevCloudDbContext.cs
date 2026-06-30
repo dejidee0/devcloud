@@ -14,6 +14,7 @@ public sealed class DevCloudDbContext(DbContextOptions<DevCloudDbContext> option
     public DbSet<Session> Sessions => Set<Session>();
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
     public DbSet<SecurityScan> SecurityScans => Set<SecurityScan>();
+    public DbSet<ServerMetricSnapshot> ServerMetricSnapshots => Set<ServerMetricSnapshot>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -76,6 +77,11 @@ public sealed class DevCloudDbContext(DbContextOptions<DevCloudDbContext> option
             b.Property(x => x.HighestSeverity).HasConversion<string>().HasMaxLength(40);
             b.Property(x => x.Summary).HasMaxLength(4000);
             b.HasOne(x => x.Project).WithMany().HasForeignKey(x => x.ProjectId).OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<ServerMetricSnapshot>(b =>
+        {
+            b.HasIndex(x => x.CapturedAt);
         });
     }
 }
