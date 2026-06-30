@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 232 64" fill="none" role="img" aria-label="DevCloud">
+  <defs>
+    <linearGradient id="dcGoldFull" x1="6" y1="6" x2="58" y2="58" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#F5A623"/>
+      <stop offset="1" stop-color="#FFC861"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="56" height="56" rx="14" stroke="url(#dcGoldFull)" stroke-width="4"/>
+  <line x1="24" y1="24" x2="40" y2="40" stroke="url(#dcGoldFull)" stroke-width="3" stroke-linecap="round" opacity="0.85"/>
+  <circle cx="24" cy="24" r="5" fill="#00D97E"/>
+  <circle cx="40" cy="40" r="5" fill="#F5A623"/>
+  <text x="80" y="41" font-family="Inter, system-ui, -apple-system, sans-serif" font-size="30" font-weight="500" letter-spacing="-0.5">
+    <tspan fill="#ededed">Dev</tspan><tspan fill="#F5A623">Cloud</tspan>
+  </text>
+</svg>

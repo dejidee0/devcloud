@@ -1,5 +1,23 @@
-import type { CSSProperties, HTMLAttributes, ReactNode } from "react";
+import type { ButtonHTMLAttributes, CSSProperties, HTMLAttributes, ReactNode } from "react";
 import { avatarColor } from "@/lib/colors";
+
+type ButtonVariant = "primary" | "secondary" | "ai" | "success" | "danger";
+const VARIANT_CLASS: Record<ButtonVariant, string> = {
+  primary: "btn-primary",
+  secondary: "btn-secondary",
+  ai: "btn-ai",
+  success: "btn-success",
+  danger: "btn-danger"
+};
+
+/** Brand button. primary = gold gradient (default), secondary = gold outline, success = green, danger = red, ai = purple. */
+export function Button({ variant = "primary", className, children, ...rest }: { variant?: ButtonVariant } & ButtonHTMLAttributes<HTMLButtonElement>) {
+  return (
+    <button {...rest} className={`${VARIANT_CLASS[variant]}${className ? ` ${className}` : ""}`}>
+      {children}
+    </button>
+  );
+}
 
 export function Card({ children, style, accent, ...rest }: { children: ReactNode; style?: CSSProperties; accent?: boolean } & HTMLAttributes<HTMLElement>) {
   return (

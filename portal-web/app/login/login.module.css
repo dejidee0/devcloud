@@ -97,8 +97,8 @@
 
 .field input:focus,
 .passwordWrap input:focus {
-  border-color: #00D97E;
-  box-shadow: 0 0 0 3px rgba(0, 217, 126, 0.13), 0 0 26px rgba(0, 217, 126, 0.1);
+  border-color: #F5A623;
+  box-shadow: 0 0 0 3px rgba(245, 166, 35, 0.16), 0 0 26px rgba(245, 166, 35, 0.12);
   background: #161616;
 }
 
@@ -111,8 +111,8 @@
 .passwordWrap input:-webkit-autofill:focus {
   -webkit-text-fill-color: #ffffff;
   caret-color: #ffffff;
-  box-shadow: 0 0 0 1000px #161616 inset, 0 0 0 3px rgba(0, 217, 126, 0.13);
-  border-color: #00D97E;
+  box-shadow: 0 0 0 1000px #161616 inset, 0 0 0 3px rgba(245, 166, 35, 0.16);
+  border-color: #F5A623;
   transition: background-color 9999s ease-out 0s;
 }
 .passwordWrap {
@@ -149,15 +149,15 @@
   min-height: 52px;
   border: 0;
   border-radius: 7px;
-  background: #00D97E;
-  color: #000000;
+  background: linear-gradient(135deg, #F5A623, #FFC861);
+  color: #1a1206;
   font-weight: 700;
   transition: filter 160ms ease;
 }
 
 .submitButton:hover {
-  background: #00D97E;
-  filter: brightness(1.1);
+  background: linear-gradient(135deg, #F5A623, #FFC861);
+  filter: brightness(1.08);
 }
 
 .submitButton:disabled {
@@ -176,7 +176,7 @@
 
 .altLink {
   justify-self: center;
-  color: #00D97E;
+  color: #F5A623;
   font-size: 14px;
   font-weight: 600;
   transition: filter 200ms cubic-bezier(0.16, 1, 0.3, 1);

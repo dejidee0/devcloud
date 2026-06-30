@@ -155,6 +155,8 @@ app.MapSessionEndpoints();
 app.MapInfrastructureEndpoints();
 app.MapAiEndpoints();
 app.MapAnalyticsEndpoints();
+app.MapAuditEndpoints();
+app.MapTimeTrackingEndpoints();
 app.MapHub<ActivityHub>("/hubs/activity");
 app.MapHub<TerminalHub>("/hubs/terminal");
 

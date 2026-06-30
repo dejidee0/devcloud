@@ -17,6 +17,7 @@ import {
   Video,
   X
 } from "lucide-react";
+import { Logo } from "@/components/Logo";
 import styles from "./page.module.css";
 
 type Accent = "gold" | "green" | "blue" | "purple";
@@ -355,7 +356,7 @@ export default function Home() {
     <main className={styles.page}>
       <header className={styles.nav}>
         <div className={styles.navInner}>
-          <Link href="/" className={styles.logo}>DevCloud</Link>
+          <Link href="/" className={styles.logo} aria-label="DevCloud home"><Logo height={30} /></Link>
           <nav className={styles.navLinks}>
             <button type="button" onClick={() => scrollToId("features")}>Features</button>
             <button type="button" onClick={() => scrollToId("how-it-works")}>How It Works</button>
@@ -583,7 +584,7 @@ export default function Home() {
 
       <footer className={styles.footer}>
         <div className={styles.footerInner}>
-          <div className={styles.footerBrand}><span className={styles.logo}>DevCloud</span><small>by Codewithmonk Technology</small></div>
+          <div className={styles.footerBrand}><Logo height={26} /><small>by Codewithmonk Technology</small></div>
           <nav className={styles.footerLinks}>
             <button type="button" onClick={() => scrollToId("features")}>Features</button>
             <button type="button" onClick={() => scrollToId("pricing")}>Pricing</button>

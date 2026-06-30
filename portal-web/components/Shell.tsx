@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { CommandPalette } from "@/components/CommandPalette";
+import { Logo, LogoMark } from "@/components/Logo";
 
 type NavItem = readonly [string, LucideIcon, string];
 
@@ -40,7 +41,7 @@ const ADMIN: readonly NavItem[] = [
 
 const AI_PURPLE = "#8B5CF6";
 const ADMIN_INDIGO = "#6366F1";
-const BRAND = "#00D97E";
+const BRAND = "#F5A623"; // gold — primary brand accent for MAIN nav
 const STORAGE_KEY = "devcloud_sidebar_collapsed";
 
 export function Shell({ children }: { children: React.ReactNode }) {
@@ -128,7 +129,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
       ...(isMobile ? { position: "fixed", top: 0, left: 0, bottom: 0, width: 260, zIndex: 1001, transform: mobileOpen ? "translateX(0)" : "translateX(-100%)", transition: "transform 220ms cubic-bezier(0.16,1,0.3,1)", boxShadow: mobileOpen ? "8px 0 40px rgba(0,0,0,0.6)" : "none" } : {})
     }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: effectiveCollapsed ? "center" : "space-between", padding: effectiveCollapsed ? "6px 0 10px" : "6px 16px 10px", gap: 8 }}>
-        {!effectiveCollapsed ? <span className="grad-text" style={{ fontWeight: 800, fontSize: 18, letterSpacing: -0.5 }}>DevCloud</span> : <span style={{ color: "var(--gold)", fontWeight: 800, fontSize: 16 }}>DC</span>}
+        {!effectiveCollapsed ? <Logo height={26} /> : <LogoMark size={28} />}
         {isMobile ? (
           <button onClick={() => setMobileOpen(false)} title="Close menu" aria-label="Close menu" style={{ padding: 4, minHeight: 0, background: "transparent", border: "1px solid var(--border-strong)", borderRadius: 6, color: "var(--text-secondary)" }}><X size={16} /></button>
         ) : hydrated ? (

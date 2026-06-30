@@ -5,6 +5,7 @@ import type { Route } from "next";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
+import { Logo } from "@/components/Logo";
 import { publicApiUrl } from "@/lib/config";
 import styles from "./signup.module.css";
 
@@ -107,7 +108,7 @@ export default function SignupPage() {
   return (
     <main className={styles.signupShell}>
       <section className={styles.formPanel}>
-        <div className={styles.brand}>DevCloud</div>
+        <div className={styles.brand}><Logo height={30} /></div>
         <div className={styles.formGlow} />
         <form className={styles.signupCard} onSubmit={submit}>
           <div className={styles.copyBlock}>

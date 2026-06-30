@@ -11,6 +11,8 @@
 
   /* Expanded semantic palette */
   --gold: #F5A623;
+  --gold-light: #FFC861;
+  --gold-gradient: linear-gradient(135deg, #F5A623, #FFC861);
   --green: #00D97E;
   --blue: #0EA5E9;
   --purple: #8B5CF6;
@@ -97,6 +99,30 @@ h2 { font-size: clamp(15px, 0.9rem + 0.4vw, 18px); }
   border: none;
 }
 .btn-ai:hover { filter: brightness(1.08); background: var(--grad-purple); }
+/* Secondary = ghost/outline gold */
+.btn-secondary {
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  font-weight: 600;
+}
+.btn-secondary:hover { background: var(--gold-dim); }
+/* Success = green (positive actions only) */
+.btn-success {
+  background: linear-gradient(135deg, #00D97E, #22D3EE);
+  color: #06231a;
+  font-weight: 600;
+  border: none;
+}
+.btn-success:hover { filter: brightness(1.08); }
+/* Danger = red (destructive only) */
+.btn-danger {
+  background: transparent;
+  border: 1px solid var(--red);
+  color: var(--red);
+  font-weight: 600;
+}
+.btn-danger:hover { background: rgba(255, 59, 48, 0.12); }
 .grad-text {
   background: var(--grad-gold);
   -webkit-background-clip: text;
