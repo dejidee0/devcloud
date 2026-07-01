@@ -1,6 +1,6 @@
-import { publicApiUrl } from "@/lib/config";
+import { browserApiBaseUrl, publicApiUrl } from "@/lib/config";
 
-const API_URL = publicApiUrl();
+const API_URL = browserApiBaseUrl();
 
 function readToken(): string | null {
   if (typeof window === "undefined") return null;
@@ -57,11 +57,12 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 export function apiUrl(path: string) {
-  return `${API_URL}${path}`;
+  return `${publicApiUrl()}${path}`;
 }
 
 export function authToken() {
   return readToken();
 }
+
 
 

@@ -23,7 +23,7 @@
   --indigo: #6366F1;
 
   /* Aliases kept for existing usage */
-  --brand: #00D97E;
+  --brand: #F5A623;
   --brand-dim: rgba(0, 217, 126, 0.1);
   --danger: #FF3B30;
   --warning: #FB923C;
@@ -109,7 +109,7 @@ h2 { font-size: clamp(15px, 0.9rem + 0.4vw, 18px); }
 .btn-secondary:hover { background: var(--gold-dim); }
 /* Success = green (positive actions only) */
 .btn-success {
-  background: linear-gradient(135deg, #00D97E, #22D3EE);
+  background: var(--gold-gradient);
   color: #06231a;
   font-weight: 600;
   border: none;
@@ -171,3 +171,4 @@ h2 { font-size: clamp(15px, 0.9rem + 0.4vw, 18px); }
 @media (max-width: 900px) {
   .dash-main, .split-2 { grid-template-columns: 1fr; }
 }
+

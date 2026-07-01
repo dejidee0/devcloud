@@ -6,10 +6,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import { Logo } from "@/components/Logo";
-import { publicApiUrl } from "@/lib/config";
+import { browserApiBaseUrl } from "@/lib/config";
 import styles from "./signup.module.css";
 
-const API_URL = publicApiUrl();
+const API_URL = browserApiBaseUrl();
 const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 14;
 
 function cookieSecureSuffix() {
@@ -205,6 +205,7 @@ export default function SignupPage() {
     </main>
   );
 }
+
 
 
 

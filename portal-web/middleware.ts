@@ -11,7 +11,9 @@ const protectedRoutes = [
   "/settings",
   "/time-tracking",
   "/secrets",
-  "/client"
+  "/client",
+  "/dev",
+  "/pm"
 ];
 
 export function middleware(request: NextRequest) {
@@ -51,6 +53,10 @@ export const config = {
     "/settings/:path*",
     "/time-tracking/:path*",
     "/secrets/:path*",
-    "/client/:path*"
+    "/client/:path*",
+    "/dev/:path*",
+    "/pm/:path*"
   ]
 };
+
+

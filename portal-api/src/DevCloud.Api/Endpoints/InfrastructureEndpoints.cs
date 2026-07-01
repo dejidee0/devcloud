@@ -11,9 +11,9 @@ public static class InfrastructureEndpoints
 {
     public static RouteGroupBuilder MapInfrastructureEndpoints(this WebApplication app)
     {
-        var group = app.MapGroup("/api/infrastructure").WithTags("Infrastructure").RequireAuthorization(RolePolicies.OwnerOnly);
-        group.MapPost("/lockdown", async (InfrastructureStatusService service, CancellationToken ct) => Results.Ok(new { output = await service.LockdownAsync(ct) }));
-        group.MapPost("/unlock", async (InfrastructureStatusService service, CancellationToken ct) => Results.Ok(new { output = await service.UnlockAsync(ct) }));
+        var group = app.MapGroup("/api/infrastructure").WithTags("Infrastructure").RequireAuthorization(RolePolicies.Authenticated);
+        group.MapPost("/lockdown", async (InfrastructureStatusService service, CancellationToken ct) => Results.Ok(new { output = await service.LockdownAsync(ct) })).RequireAuthorization(RolePolicies.OwnerOnly);
+        group.MapPost("/unlock", async (InfrastructureStatusService service, CancellationToken ct) => Results.Ok(new { output = await service.UnlockAsync(ct) })).RequireAuthorization(RolePolicies.OwnerOnly);
         group.MapGet("/status", async (InfrastructureStatusService service, CancellationToken ct) => Results.Ok(await service.GetStatusAsync(ct)));
 
         // Real server stats (CPU / RAM / Disk) read over SSH from the Hetzner host, cached 30s.
@@ -65,6 +65,16 @@ public static class InfrastructureEndpoints
             }
         });
 
+
+        group.MapGet("/exit-nodes", () => Results.Ok(new[]
+        {
+            new { id = "de-fra", city = "Frankfurt", country = "Germany", flag = "DE", status = "live", ip = (string?)"167.233.97.163", provider = (string?)"Hetzner" },
+            new { id = "uk-lon", city = "London", country = "United Kingdom", flag = "GB", status = "coming_soon", ip = (string?)null, provider = (string?)null },
+            new { id = "us-nyc", city = "New York", country = "United States", flag = "US", status = "coming_soon", ip = (string?)null, provider = (string?)null },
+            new { id = "sg", city = "Singapore", country = "Singapore", flag = "SG", status = "coming_soon", ip = (string?)null, provider = (string?)null },
+            new { id = "ca-tor", city = "Toronto", country = "Canada", flag = "CA", status = "coming_soon", ip = (string?)null, provider = (string?)null },
+            new { id = "au-syd", city = "Sydney", country = "Australia", flag = "AU", status = "coming_soon", ip = (string?)null, provider = (string?)null }
+        }));
         // Last 20 network verification checks for the status timeline.
         group.MapGet("/network-history", async (DevCloudDbContext db, CancellationToken ct) =>
         {
@@ -93,3 +103,6 @@ public static class InfrastructureEndpoints
         return group;
     }
 }
+
+
+

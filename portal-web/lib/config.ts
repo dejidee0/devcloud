@@ -1,4 +1,4 @@
-const PUBLIC_API_URL = "https://devcloud-api-s816.onrender.com";
+export const RENDER_API_URL = "https://devcloud-api-s816.onrender.com";
 const LOCAL_API_URL = "http://localhost:5000";
 
 function isUnsafeProductionApiUrl(value: string) {
@@ -15,14 +15,22 @@ function isUnsafeProductionApiUrl(value: string) {
   }
 }
 
-export function publicApiUrl() {
-  const configured = process.env.NEXT_PUBLIC_API_URL?.trim();
-  const fallback = process.env.NODE_ENV === "production" ? PUBLIC_API_URL : LOCAL_API_URL;
+export function upstreamApiUrl() {
+  const configured = process.env.NEXT_PUBLIC_API_URL?.trim() || process.env.DEVCLOUD_PUBLIC_API_URL?.trim();
+  const fallback = process.env.NODE_ENV === "production" ? RENDER_API_URL : LOCAL_API_URL;
   const candidate = (configured || fallback).replace(/\/$/, "");
 
   if (process.env.NODE_ENV === "production" && isUnsafeProductionApiUrl(candidate)) {
-    return PUBLIC_API_URL;
+    return RENDER_API_URL;
   }
 
   return candidate;
+}
+
+export function browserApiBaseUrl() {
+  return "";
+}
+
+export function publicApiUrl() {
+  return upstreamApiUrl();
 }

@@ -6,10 +6,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import { Logo } from "@/components/Logo";
-import { publicApiUrl } from "@/lib/config";
+import { browserApiBaseUrl } from "@/lib/config";
 import styles from "./login.module.css";
 
-const API_URL = publicApiUrl();
+const API_URL = browserApiBaseUrl();
 const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 14;
 
 function cookieSecureSuffix() {
@@ -90,7 +90,15 @@ export default function LoginPage() {
       document.cookie = `devcloud_token=; Path=/; Max-Age=0; SameSite=Lax${secureSuffix}`;
 
       const nextPath = new URLSearchParams(window.location.search).get("next");
-      const redirectTo = nextPath?.startsWith("/") ? nextPath : "/dashboard";
+      const roleRedirects: Record<string, Route> = {
+        Owner: "/dashboard" as Route,
+        CoFounder: "/dashboard" as Route,
+        Developer: "/dev" as Route,
+        ProductManager: "/pm" as Route,
+        Client: "/client/dashboard" as Route
+      };
+      const defaultRedirect = roleRedirects[user.role] ?? ("/dashboard" as Route);
+      const redirectTo = nextPath?.startsWith("/") ? nextPath : defaultRedirect;
       router.push(redirectTo as Route);
       router.refresh();
     } catch (err) {
@@ -182,5 +190,6 @@ export default function LoginPage() {
     </main>
   );
 }
+
 
 
