@@ -26,6 +26,7 @@ public sealed class DevCloudDbContext(DbContextOptions<DevCloudDbContext> option
             b.Property(x => x.Role).HasConversion<string>().HasMaxLength(40);
             b.Property(x => x.PasswordHash).HasMaxLength(512);
             b.Property(x => x.RefreshToken).HasMaxLength(512);
+            b.Property(x => x.Organization).HasMaxLength(160);
         });
 
         modelBuilder.Entity<Project>(b =>

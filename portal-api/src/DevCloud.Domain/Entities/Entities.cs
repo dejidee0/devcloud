@@ -10,6 +10,7 @@ public sealed class User
     public UserRole Role { get; set; }
     public required string PasswordHash { get; set; }
     public string? RefreshToken { get; set; }
+    public string? Organization { get; set; }
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
     public DateTimeOffset? LastLogin { get; set; }
     public bool IsActive { get; set; } = true;

@@ -6,7 +6,7 @@ import type { Route } from "next";
 import { usePathname } from "next/navigation";
 import {
   Activity, BarChart3, Boxes, ChevronLeft, ChevronRight, Clock, FileText, FolderKanban, Gauge,
-  GitPullRequestArrow, KeyRound, ListPlus, Menu, Rocket, Search, Settings, Shield, ShieldCheck, Terminal, Users, Wand2, X
+  GitPullRequestArrow, KeyRound, ListPlus, Menu, Rocket, Search, Settings, Shield, ShieldCheck, Terminal, UserCircle, Users, Wand2, X
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { CommandPalette } from "@/components/CommandPalette";
@@ -33,6 +33,7 @@ const AI_TOOLS: readonly NavItem[] = [
 ];
 
 const ADMIN: readonly NavItem[] = [
+  ["/account", UserCircle, "Account"],
   ["/audit", Shield, "Audit"],
   ["/secrets", KeyRound, "Secrets"],
   ["/time-tracking", Clock, "Time Tracking"],

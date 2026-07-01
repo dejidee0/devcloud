@@ -25,3 +25,7 @@ public sealed record GeneratedTicket(string Title, string? Description, string? 
 public sealed record SecurityScanRequest(Guid ProjectId);
 public sealed record GenerateReportRequest(Guid ProjectId, DateTimeOffset StartDate, DateTimeOffset EndDate);
 public sealed record StartLiveEnvironmentRequest(string Stack);
+
+// Account (self-service profile)
+public sealed record UpdateAccountRequest(string? FullName, string? Organization);
+public sealed record ChangePasswordRequest(string CurrentPassword, string NewPassword);
