@@ -129,12 +129,12 @@ export function Shell({ children }: { children: React.ReactNode }) {
       display: "flex", flexDirection: "column", gap: 2, overflowY: "auto", overflowX: "hidden",
       ...(isMobile ? { position: "fixed", top: 0, left: 0, bottom: 0, width: 260, zIndex: 1001, transform: mobileOpen ? "translateX(0)" : "translateX(-100%)", transition: "transform 220ms cubic-bezier(0.16,1,0.3,1)", boxShadow: mobileOpen ? "8px 0 40px rgba(0,0,0,0.6)" : "none" } : {})
     }}>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: effectiveCollapsed ? "center" : "space-between", padding: effectiveCollapsed ? "6px 0 10px" : "6px 16px 10px", gap: 8 }}>
+      <div style={{ display: "flex", flexDirection: effectiveCollapsed ? "column" : "row", alignItems: "center", justifyContent: effectiveCollapsed ? "center" : "space-between", padding: effectiveCollapsed ? "6px 0 10px" : "6px 16px 10px", gap: 8 }}>
         {!effectiveCollapsed ? <Logo height={26} /> : <LogoMark size={28} />}
         {isMobile ? (
           <button onClick={() => setMobileOpen(false)} title="Close menu" aria-label="Close menu" style={{ padding: 4, minHeight: 0, background: "transparent", border: "1px solid var(--border-strong)", borderRadius: 6, color: "var(--text-secondary)" }}><X size={16} /></button>
         ) : hydrated ? (
-          <button onClick={toggle} title={collapsed ? "Expand" : "Collapse"} aria-label="Toggle sidebar" style={{ padding: 4, minHeight: 0, display: "grid", placeItems: "center", background: "transparent", border: "1px solid var(--border-strong)", borderRadius: 6, color: "var(--text-secondary)", position: collapsed ? "absolute" : "static", top: collapsed ? 8 : undefined, right: collapsed ? 8 : undefined }}>
+          <button onClick={toggle} title={collapsed ? "Expand sidebar" : "Collapse sidebar"} aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"} style={{ width: effectiveCollapsed ? 34 : undefined, height: effectiveCollapsed ? 30 : undefined, padding: effectiveCollapsed ? 0 : 4, minHeight: 0, display: "grid", placeItems: "center", background: collapsed ? "rgba(245, 166, 35, 0.08)" : "transparent", border: `1px solid ${collapsed ? "var(--brand)" : "var(--border-strong)"}`, borderRadius: 6, color: collapsed ? "var(--brand)" : "var(--text-secondary)", flexShrink: 0 }}>
             {collapsed ? <ChevronRight size={15} /> : <ChevronLeft size={15} />}
           </button>
         ) : null}
@@ -159,6 +159,8 @@ export function Shell({ children }: { children: React.ReactNode }) {
         <header style={{ height: 56, borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", gap: 14, padding: "0 16px", background: "var(--bg-surface)", position: "sticky", top: 0, zIndex: 50 }}>
           {isMobile ? (
             <button onClick={() => setMobileOpen(true)} title="Menu" aria-label="Open menu" style={{ padding: 7, minHeight: 0, background: "transparent", border: "1px solid var(--border-strong)", borderRadius: 8, color: "var(--text-primary)" }}><Menu size={18} /></button>
+          ) : collapsed ? (
+            <button onClick={toggle} title="Expand sidebar" aria-label="Expand sidebar" style={{ width: 32, height: 32, padding: 0, minHeight: 0, display: "grid", placeItems: "center", background: "rgba(245, 166, 35, 0.08)", border: "1px solid var(--brand)", borderRadius: 8, color: "var(--brand)" }}><ChevronRight size={18} /></button>
           ) : <Activity size={17} color="var(--brand)" />}
           <span style={{ color: "var(--text-secondary)", fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{pathname.split("/").filter(Boolean).join(" / ") || "dashboard"}</span>
           <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 12 }}>
